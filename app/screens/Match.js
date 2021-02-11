@@ -396,18 +396,9 @@ const Match = ({ route, navigation }) => {
             </View>
           </View>
           <View style={[globalStyles.line, { marginBottom: 0 }]} />
-          <Text
-            adjustsFontSizeToFit
-            numberOfLines={1}
-            style={{
-              color: colors.primaryText,
-              textAlign: 'center',
-              marginTop: constants.viewSpacing,
-            }}
-          >
-            Bot lobby? Check out{' '}
-            <Text
-              style={{ color: colors.primary }}
+          <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: constants.viewSpacing, }}>
+            <Text style={{ color: colors.primaryText }}>Bot lobby? Check out </Text>
+            <TouchableOpacity
               onPress={() =>
                 navigation.navigate('SBMMLobby', {
                   matchID: matchID,
@@ -415,9 +406,9 @@ const Match = ({ route, navigation }) => {
                 })
               }
             >
-              SBMMWarzone.com
-            </Text>
-          </Text>
+              <Text style={{ color: colors.primary }}>SBMMWarzone.com</Text>
+            </TouchableOpacity>
+          </View>
           <View style={globalStyles.toggleButtonView}>
             <TouchableOpacity
               style={

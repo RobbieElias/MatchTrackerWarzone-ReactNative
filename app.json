@@ -1,11 +1,13 @@
 {
   "expo": {
-    "name": "MatchTrackerWarzone",
+    "name": "Match Tracker for Warzone",
     "slug": "MatchTrackerWarzone",
+    "privacy": "unlisted",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icons/icon.png",
     "backgroundColor": "#1e1e1e",
+    "primaryColor": "#367ec2",
     "splash": {
       "image": "./assets/icons/splash.png",
       "resizeMode": "contain",
@@ -20,7 +22,7 @@
     "ios": {
       "bundleIdentifier": "com.robbieelias.MatchTrackerWarzone",
       "buildNumber": "1.0.0",
-      "supportsTablet": true,
+      "supportsTablet": false,
       "backgroundColor": "#1e1e1e"
     },
     "android": {
@@ -35,6 +37,8 @@
     },
     "web": {
       "favicon": "./assets/icons/favicon.png"
-    }
+    },
+    "description": "Mobile app for tracking player matches and stats for COD Warzone.",
+    "githubUrl": "https://github.com/RobbieElias/MatchTrackerWarzone-ReactNative"
   }
 }

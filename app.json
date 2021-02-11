@@ -1,14 +1,15 @@
 {
   "expo": {
-    "name": "BotLobbiesWarzone",
-    "slug": "BotLobbiesWarzone",
+    "name": "MatchTrackerWarzone",
+    "slug": "MatchTrackerWarzone",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icons/icon.png",
+    "backgroundColor": "#1e1e1e",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/icons/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1e1e1e"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -17,16 +18,19 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "backgroundColor": "#1e1e1e"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "foregroundImage": "./assets/icons/adaptive-icon.png",
+        "backgroundColor": "#1e1e1e"
+      },
+      "icon": "./assets/icons/icon.png",
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icons/favicon.png"
     }
   }
 }

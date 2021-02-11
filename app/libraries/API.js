@@ -1,3 +1,8 @@
+/**
+ * MIT License 
+ * 
+ * Copyright (c) 2020 Liam Gaskell
+ */
 const axios = require("axios");
 const rateLimit = require("axios-rate-limit");
 import md5 from "react-native-md5";

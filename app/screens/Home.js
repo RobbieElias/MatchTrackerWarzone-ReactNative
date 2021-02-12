@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,23 +9,23 @@ import {
   FlatList,
   Dimensions,
   Image,
-} from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+} from "react-native";
+import { useIsFocused } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faPlaystation,
   faBattleNet,
   faXbox,
-} from '@fortawesome/free-brands-svg-icons';
-import { Snackbar } from 'react-native-paper';
-import { globalStyles } from '../config/globalStyles';
-import * as constants from '../config/constants';
-import { colors } from '../config/colors';
-import { getRecents } from '../utils/userData';
+} from "@fortawesome/free-brands-svg-icons";
+import { Snackbar } from "react-native-paper";
+import { globalStyles } from "../config/globalStyles";
+import * as constants from "../config/constants";
+import { colors } from "../config/colors";
+import { getRecents } from "../utils/userData";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 const PlayerButton = ({ name, username, platform, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.playersListButton}>
@@ -36,19 +36,22 @@ const PlayerButton = ({ name, username, platform, onPress }) => (
 const Home = ({ navigation }) => {
   const recentsFlatListRef = useRef();
   const topPlayersFlatListRef = useRef();
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
   const [selectedPlatform, setSelectedPlatform] = useState(null);
   const [recents, setRecents] = useState([]);
   const [snackbarIsVisible, setSnackbarIsVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    getRecents().then(recents => {
+    getRecents().then((recents) => {
       setRecents(recents);
-      recentsFlatListRef.current.scrollToOffset({ animated: false, offset: 0 })
-      topPlayersFlatListRef.current.scrollToOffset({ animated: false, offset: 0 })
+      recentsFlatListRef.current.scrollToOffset({ animated: false, offset: 0 });
+      topPlayersFlatListRef.current.scrollToOffset({
+        animated: false,
+        offset: 0,
+      });
     });
   }, [isFocused]);
 
@@ -59,15 +62,14 @@ const Home = ({ navigation }) => {
 
   const onPressSearchProfile = () => {
     if (selectedPlatform === null) {
-      setSnackbarMessage('Please select a platform.');
+      setSnackbarMessage("Please select a platform.");
       setSnackbarIsVisible(true);
-    } else if (username === '') {
-      setSnackbarMessage('Please enter a username.');
+    } else if (username === "") {
+      setSnackbarMessage("Please enter a username.");
       setSnackbarIsVisible(true);
-    }
-    else {
+    } else {
       setSnackbarIsVisible(false);
-      navigation.navigate('Profile', {
+      navigation.navigate("Profile", {
         username: username,
         platform: selectedPlatform,
       });
@@ -75,12 +77,12 @@ const Home = ({ navigation }) => {
   };
 
   const renderPlayerButton = ({ item }) => (
-    <PlayerButton 
-      name={item.name ?? item.username} 
-      username={item.username} 
-      platform={item.platform} 
+    <PlayerButton
+      name={item.name ?? item.username}
+      username={item.username}
+      platform={item.platform}
       onPress={() => {
-        navigation.navigate('Profile', {
+        navigation.navigate("Profile", {
           username: item.username,
           platform: item.platform,
         });
@@ -89,11 +91,24 @@ const Home = ({ navigation }) => {
   );
 
   return (
-    <KeyboardAwareScrollView contentContainerStyle={globalStyles.container} style={{backgroundColor:colors.background}}>
-      <StatusBar barStyle='light-content' translucent={true} backgroundColor={colors.background} />
+    <KeyboardAwareScrollView
+      contentContainerStyle={globalStyles.container}
+      style={{ backgroundColor: colors.background }}
+    >
+      <StatusBar
+        barStyle="light-content"
+        translucent={true}
+        backgroundColor={colors.background}
+      />
       <View style={styles.homeView}>
         <View style={styles.logoView}>
-          <Image width={276} height={136} resizeMode={'contain'} source={require('../../assets/images/wz-logo.png')} style={{marginTop: insets.top}} />
+          <Image
+            width={276}
+            height={136}
+            resizeMode={"contain"}
+            source={require("../../assets/images/wz-logo.png")}
+            style={{ marginTop: insets.top }}
+          />
         </View>
         <View style={styles.middleView}>
           <View style={globalStyles.toggleButtonView}>
@@ -194,15 +209,15 @@ const Home = ({ navigation }) => {
             placeholderTextColor={colors.secondaryText}
             placeholder={
               selectedPlatform === constants.platforms.BATTLENET
-                ? 'Username#XXXX'
-                : 'Username'
+                ? "Username#XXXX"
+                : "Username"
             }
             onChangeText={(username) => setUsername(username.trim())}
             onSubmitEditing={() => onPressSearchProfile()}
             defaultValue={username}
             autoCorrect={false}
-            autoCompleteType={'off'}
-            returnKeyType={'search'}
+            autoCompleteType={"off"}
+            returnKeyType={"search"}
           />
           <TouchableOpacity
             style={styles.button}
@@ -211,36 +226,51 @@ const Home = ({ navigation }) => {
             <Text style={styles.buttonText}>SEARCH PROFILE</Text>
           </TouchableOpacity>
         </View>
-        <View style={{ flex: 1, justifyContent: 'center', }}>
+        <View style={{ flex: 1, justifyContent: "center" }}>
           <Text style={styles.playersListTitle}>TOP PLAYERS</Text>
           <FlatList
             ref={recentsFlatListRef}
             horizontal={true}
             style={styles.playersListView}
-            contentContainerStyle={{ paddingRight: 2*constants.defaultPadding }}
+            contentContainerStyle={{
+              paddingRight: 2 * constants.defaultPadding,
+            }}
             data={constants.topPlayers}
             renderItem={renderPlayerButton}
-            keyExtractor={player => player.username+'-'+player.platform.code}
-            showsHorizontalScrollIndicator={false}
-            ItemSeparatorComponent={
-              () => <View style={{ width: constants.viewSpacing, }}/>
+            keyExtractor={(player) =>
+              player.username + "-" + player.platform.code
             }
+            showsHorizontalScrollIndicator={false}
+            ItemSeparatorComponent={() => (
+              <View style={{ width: constants.viewSpacing }} />
+            )}
           />
-          {recents.length > 0 &&
-            <Text style={[styles.playersListTitle, { marginTop: height > 600 ? 32 : 16, }]}>RECENTS</Text>
-          }
+          {recents.length > 0 && (
+            <Text
+              style={[
+                styles.playersListTitle,
+                { marginTop: height > 600 ? 32 : 16 },
+              ]}
+            >
+              RECENTS
+            </Text>
+          )}
           <FlatList
             ref={topPlayersFlatListRef}
             horizontal={true}
             style={styles.playersListView}
-            contentContainerStyle={{ paddingRight: 2*constants.defaultPadding }}
+            contentContainerStyle={{
+              paddingRight: 2 * constants.defaultPadding,
+            }}
             data={recents}
             renderItem={renderPlayerButton}
-            keyExtractor={player => player.username+'-'+player.platform.code}
-            showsHorizontalScrollIndicator={false}
-            ItemSeparatorComponent={
-              () => <View style={{ width: constants.viewSpacing, }}/>
+            keyExtractor={(player) =>
+              player.username + "-" + player.platform.code
             }
+            showsHorizontalScrollIndicator={false}
+            ItemSeparatorComponent={() => (
+              <View style={{ width: constants.viewSpacing }} />
+            )}
           />
         </View>
       </View>
@@ -259,27 +289,27 @@ const Home = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  homeView: { 
+  homeView: {
     flex: 1,
-    justifyContent: 'space-evenly',
+    justifyContent: "space-evenly",
   },
   logoView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: constants.defaultPadding,
   },
   middleView: {
     flex: 0,
-    height: 'auto',
-    width: '100%',
-    alignItems: 'center',
+    height: "auto",
+    width: "100%",
+    alignItems: "center",
     paddingHorizontal: constants.defaultPadding,
   },
   usernameInput: {
     height: height > 600 ? 70 : 50,
     padding: 8,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     borderColor: colors.primary,
     borderWidth: 1,
     borderRadius: 4,
@@ -287,12 +317,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   button: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: colors.primary,
     height: height > 600 ? 70 : 50,
     borderRadius: 4,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     marginTop: constants.viewSpacing,
   },
   buttonText: {
@@ -300,7 +330,7 @@ const styles = StyleSheet.create({
     color: colors.primaryText,
   },
   playersListTitle: {
-    textAlign: 'center',
+    textAlign: "center",
     color: colors.primaryText,
     fontSize: height > 600 ? 20 : 16,
   },
@@ -310,12 +340,12 @@ const styles = StyleSheet.create({
     paddingLeft: constants.defaultPadding,
   },
   playersListButton: {
-    height: 'auto',
+    height: "auto",
     borderWidth: 1,
     borderRadius: 4,
     borderColor: colors.white,
     padding: constants.viewSpacing,
-  }
+  },
 });
 
 export default Home;

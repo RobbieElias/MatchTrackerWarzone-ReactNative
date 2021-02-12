@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback, memo } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,24 +7,24 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
-  Dimensions
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+  Dimensions,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faExclamationCircle,
   faUser,
   faUsers,
-} from '@fortawesome/free-solid-svg-icons';
-import { globalStyles } from '../config/globalStyles';
-import { colors } from '../config/colors';
-import * as constants from '../config/constants';
-import { formatDate } from '../utils/helpers';
+} from "@fortawesome/free-solid-svg-icons";
+import { globalStyles } from "../config/globalStyles";
+import { colors } from "../config/colors";
+import * as constants from "../config/constants";
+import { formatDate } from "../utils/helpers";
 
-const API = require('../libraries/API')({ platform: 'battle' });
-const { width, height } = Dimensions.get('window');
+const API = require("../libraries/API")({ platform: "battle" });
+const { width, height } = Dimensions.get("window");
 var matchData = [];
-var activisionUsername = '';
+var activisionUsername = "";
 
 const TeamView = React.memo(
   ({ isCurrentTeam, placement, kills, deaths, damage, players, onPress }) => (
@@ -44,7 +44,7 @@ const TeamView = React.memo(
                 numberOfLines={1}
                 style={[
                   styles.statsViewTitle,
-                  { textAlign: 'left', marginLeft: constants.viewSpacing },
+                  { textAlign: "left", marginLeft: constants.viewSpacing },
                 ]}
               >
                 {player.username}
@@ -111,9 +111,9 @@ const TeamView = React.memo(
           <Text
             adjustsFontSizeToFit={true}
             numberOfLines={1}
-            style={[styles.statsViewTitle, { fontWeight: 'bold' }]}
+            style={[styles.statsViewTitle, { fontWeight: "bold" }]}
           >
-            {players.length > 1 ? kills : ''}
+            {players.length > 1 ? kills : ""}
           </Text>
         </View>
         <View style={styles.statsViewSubView}>
@@ -122,7 +122,7 @@ const TeamView = React.memo(
             numberOfLines={1}
             style={styles.statsViewTitle}
           >
-            {players.length > 1 ? deaths : ''}
+            {players.length > 1 ? deaths : ""}
           </Text>
         </View>
         <View style={styles.statsViewSubView}>
@@ -131,7 +131,7 @@ const TeamView = React.memo(
             numberOfLines={1}
             style={styles.statsViewTitle}
           >
-            {players.length > 1 ? damage : ''}
+            {players.length > 1 ? damage : ""}
           </Text>
         </View>
       </View>
@@ -141,7 +141,8 @@ const TeamView = React.memo(
 
 const PlayerView = React.memo(
   ({ isCurrentPlayer, username, kills, deaths, damage, onPress }) => (
-    <TouchableOpacity onPress={onPress}
+    <TouchableOpacity
+      onPress={onPress}
       style={[
         styles.statsView,
         styles.statsRow,
@@ -154,7 +155,7 @@ const PlayerView = React.memo(
           numberOfLines={1}
           style={[
             styles.statsViewTitle,
-            { textAlign: 'left', marginLeft: constants.viewSpacing },
+            { textAlign: "left", marginLeft: constants.viewSpacing },
           ]}
         >
           {username}
@@ -197,7 +198,7 @@ const Match = ({ route, navigation }) => {
   const [matchDetails, setMatchDetails] = useState(null);
   const [filterByTeam, setFilterByTeam] = useState(true);
   const [errorStatus, setErrorStatus] = useState(0);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const insets = useSafeAreaInsets();
   var isMounted = false;
 
@@ -218,8 +219,8 @@ const Match = ({ route, navigation }) => {
     } catch (error) {
       if (!isMounted) return;
       console.log(error);
-      setErrorStatus(typeof error === 'string' ? 1 : error.status);
-      setErrorMessage(typeof error === 'string' ? error : error.message);
+      setErrorStatus(typeof error === "string" ? 1 : error.status);
+      setErrorMessage(typeof error === "string" ? error : error.message);
     } finally {
       if (!isMounted) return;
       setIsLoading(false);
@@ -229,7 +230,7 @@ const Match = ({ route, navigation }) => {
   const filterMatchData = (data) => {
     if (data.allPlayers.length === 0) {
       setErrorStatus(1);
-      setErrorMessage('Match not loaded properly.');
+      setErrorMessage("Match not loaded properly.");
       return;
     }
 
@@ -258,7 +259,7 @@ const Match = ({ route, navigation }) => {
         isCurrentPlayer: isCurrentPlayer,
         username: player.player.username,
         team: player.player.team,
-        placement: player.playerStats.teamPlacement ?? 'N/A',
+        placement: player.playerStats.teamPlacement ?? "N/A",
         kills: player.playerStats.kills,
         deaths: player.playerStats.deaths,
         headshots: player.playerStats.headshots,
@@ -318,7 +319,7 @@ const Match = ({ route, navigation }) => {
   };
 
   const onPressTeamPlayer = (teamIndex, playerIndex) => {
-    navigation.navigate('PlayerMatchStats', {
+    navigation.navigate("PlayerMatchStats", {
       mode: matchDetails.mode,
       date: matchDetails.date,
       player: matchData.teams[teamIndex].players[playerIndex],
@@ -326,14 +327,14 @@ const Match = ({ route, navigation }) => {
   };
 
   const onPressPlayer = (index) => {
-    navigation.navigate('PlayerMatchStats', {
+    navigation.navigate("PlayerMatchStats", {
       mode: matchDetails.mode,
       date: matchDetails.date,
       player: matchData.players[index],
     });
   };
 
-  const keyExtractorTeams = (team, index) => 'team-' + index;
+  const keyExtractorTeams = (team, index) => "team-" + index;
 
   const keyExtractorPlayers = (player) => player.uno;
 
@@ -364,7 +365,7 @@ const Match = ({ route, navigation }) => {
   return (
     <View style={globalStyles.container}>
       <StatusBar
-        barStyle='light-content'
+        barStyle="light-content"
         translucent={true}
         backgroundColor={colors.navBarBackground}
       />
@@ -388,7 +389,7 @@ const Match = ({ route, navigation }) => {
                 numberOfLines={1}
                 style={[
                   styles.title,
-                  { color: colors.secondaryText, textAlign: 'right' },
+                  { color: colors.secondaryText, textAlign: "right" },
                 ]}
               >
                 {matchDetails.date}
@@ -396,11 +397,20 @@ const Match = ({ route, navigation }) => {
             </View>
           </View>
           <View style={[globalStyles.line, { marginBottom: 0 }]} />
-          <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: constants.viewSpacing, }}>
-            <Text style={{ color: colors.primaryText }}>Bot lobby? Check out </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: constants.viewSpacing,
+            }}
+          >
+            <Text style={{ color: colors.primaryText }}>
+              Bot lobby? Check out{" "}
+            </Text>
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate('SBMMLobby', {
+                navigation.navigate("SBMMLobby", {
                   matchID: matchID,
                   activisionUsername: activisionUsername,
                 })
@@ -474,7 +484,7 @@ const Match = ({ route, navigation }) => {
                 numberOfLines={1}
                 style={[
                   styles.statsViewSubtitle,
-                  { textAlign: 'left', marginLeft: constants.viewSpacing },
+                  { textAlign: "left", marginLeft: constants.viewSpacing },
                 ]}
               >
                 NAME
@@ -510,7 +520,7 @@ const Match = ({ route, navigation }) => {
           </View>
         </View>
       )}
-      {!isLoading &&
+      {!isLoading && (
         <FlatList
           style={
             filterByTeam ? styles.listContainer : styles.listContainerHidden
@@ -526,8 +536,8 @@ const Match = ({ route, navigation }) => {
           removeClippedSubviews={true}
           windowSize={3}
         />
-      }
-      {!isLoading &&
+      )}
+      {!isLoading && (
         <FlatList
           style={
             !filterByTeam ? styles.listContainer : styles.listContainerHidden
@@ -543,10 +553,10 @@ const Match = ({ route, navigation }) => {
           removeClippedSubviews={true}
           windowSize={10}
         />
-      }
+      )}
       {isLoading && (
         <View style={globalStyles.loadingView}>
-          <ActivityIndicator size='large' color={colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       )}
       {!isLoading && errorStatus !== 0 && (
@@ -574,18 +584,18 @@ const Match = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   listContainer: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
     paddingHorizontal: constants.defaultPadding,
   },
   listContainerHidden: {
-    display: 'none',
+    display: "none",
   },
   title: {
     color: colors.primaryText,
     fontSize: 24,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
+    fontWeight: "bold",
+    textTransform: "uppercase",
   },
   subtitle: {
     color: colors.primaryText,
@@ -602,27 +612,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   statsViewSubView: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   statsViewSubtitle: {
     color: colors.secondaryText,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: width > 360 ? 16 : 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   statsViewTitle: {
     color: colors.primaryText,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 16,
   },
   matchDate: {
     color: colors.secondaryText,
-    textAlign: 'right',
+    textAlign: "right",
     fontSize: 12,
     marginBottom: 8,
   },
@@ -631,17 +641,17 @@ const styles = StyleSheet.create({
     height: 32,
     marginHorizontal: constants.viewSpacing,
     backgroundColor: colors.primary,
-    justifyContent: 'center',
+    justifyContent: "center",
     borderRadius: 4,
   },
   placementViewSuccess: {
     backgroundColor: colors.success,
   },
   placementText: {
-    textAlign: 'center',
+    textAlign: "center",
     color: colors.primaryText,
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     padding: 4,
   },
 });

@@ -1,8 +1,8 @@
-import { StyleSheet, Dimensions } from 'react-native';
-import { colors } from './colors';
-import * as constants from '../config/constants';
+import { StyleSheet, Dimensions } from "react-native";
+import { colors } from "./colors";
+import * as constants from "../config/constants";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 export const globalStyles = StyleSheet.create({
   container: {
@@ -11,25 +11,25 @@ export const globalStyles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
-    width: '100%',
+    width: "100%",
     padding: constants.defaultPadding,
   },
   defaultText: {
     color: colors.primaryText,
   },
   defaultBorder: {
-    borderWidth: 1, 
+    borderWidth: 1,
     borderColor: colors.primary,
   },
   toggleButtonView: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
   },
   toggleButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     height: height > 600 ? 48 : 40,
     borderWidth: 1,
     borderRadius: 4,
@@ -39,9 +39,9 @@ export const globalStyles = StyleSheet.create({
   },
   toggleButtonSelected: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     height: height > 600 ? 48 : 40,
     borderWidth: 1,
     borderRadius: 4,
@@ -59,36 +59,36 @@ export const globalStyles = StyleSheet.create({
   },
   loadingView: {
     backgroundColor: colors.background,
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: constants.defaultPadding,
   },
   errorView: {
     backgroundColor: colors.background,
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: constants.defaultPadding,
   },
   errorTitle: {
     color: colors.primaryText,
     fontSize: 40,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginVertical: 40,
   },
   errorMessage: {
     color: colors.primaryText,
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   line: {
     flexGrow: 1,

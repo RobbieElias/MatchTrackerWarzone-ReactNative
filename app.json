@@ -20,13 +20,13 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "com.robbieelias.MatchTrackerWarzone",
+      "bundleIdentifier": "ca.robbieelias.MatchTrackerWarzone",
       "buildNumber": "1.0.0",
       "supportsTablet": false,
       "backgroundColor": "#1e1e1e"
     },
     "android": {
-      "package": "com.robbieelias.matchtrackerwarzone",
+      "package": "ca.robbieelias.matchtrackerwarzone",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/adaptive-icon.png",

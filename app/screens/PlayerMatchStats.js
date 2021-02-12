@@ -27,20 +27,18 @@ const PlayerMatchStats = ({ route, navigation }) => {
   const insets = useSafeAreaInsets();
 
   const getTimePlayed = () => {
-    if (player.timePlayed === 0) return '0m';
+    if (player.timePlayed === 0) return "0m";
     let minutes = Math.floor(player.timePlayed / 60);
     let seconds = player.timePlayed % 60;
 
     if (minutes === 0) {
-      return seconds + 's';
+      return seconds + "s";
+    } else if (seconds === 0) {
+      return minutes + "m";
+    } else {
+      return minutes + "m " + seconds + "s";
     }
-    else if (seconds === 0) {
-      return minutes + 'm';
-    }
-    else {
-      return minutes + 'm ' + seconds + 's';
-    }
-  }
+  };
 
   return (
     <View style={globalStyles.container}>
@@ -50,14 +48,23 @@ const PlayerMatchStats = ({ route, navigation }) => {
         backgroundColor={colors.navBarBackground}
       />
       <ScrollView
-        contentContainerStyle={{ padding: constants.defaultPadding, paddingBottom: constants.defaultPadding+insets.bottom }}
+        contentContainerStyle={{
+          padding: constants.defaultPadding,
+          paddingBottom: constants.defaultPadding + insets.bottom,
+        }}
       >
         <View style={styles.statsRow}>
           <View style={styles.statsViewSubView}>
             <Text adjustsFontSizeToFit numberOfLines={1} style={styles.title}>
               {player.username}
             </Text>
-            <Text adjustsFontSizeToFit numberOfLines={1} style={styles.subtitle}>{mode} | {date}</Text>
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={styles.subtitle}
+            >
+              {mode} | {date}
+            </Text>
           </View>
           <View
             style={
@@ -101,45 +108,103 @@ const PlayerMatchStats = ({ route, navigation }) => {
         <View style={styles.statsRow}>
           <View style={styles.statsView}>
             <Text style={styles.statsViewSubtitle}>DAMAGE</Text>
-            <Text adjustsFontSizeToFit numberOfLines={1} style={styles.statsViewTitle}>{player.damage}</Text>
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={styles.statsViewTitle}
+            >
+              {player.damage}
+            </Text>
           </View>
           <View style={styles.separator} />
           <View style={styles.statsView}>
-            <Text adjustsFontSizeToFit numberOfLines={1} style={styles.statsViewSubtitle}>DAMAGE TAKEN</Text>
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={styles.statsViewSubtitle}
+            >
+              DAMAGE TAKEN
+            </Text>
             <Text style={styles.statsViewTitle}>{player.damageTaken}</Text>
           </View>
         </View>
         <View style={styles.statsRow}>
           <View style={styles.statsView}>
-            <Text adjustsFontSizeToFit numberOfLines={1} style={styles.statsViewSubtitle}>TIME PLAYED</Text>
-            <Text adjustsFontSizeToFit numberOfLines={1} style={styles.statsViewTitle}>{getTimePlayed()}</Text>
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={styles.statsViewSubtitle}
+            >
+              TIME PLAYED
+            </Text>
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={styles.statsViewTitle}
+            >
+              {getTimePlayed()}
+            </Text>
           </View>
           <View style={styles.separator} />
           <View style={styles.statsView}>
-            <Text adjustsFontSizeToFit numberOfLines={1} style={styles.statsViewSubtitle}>% TIME MOVING</Text>
-            <Text style={styles.statsViewTitle}>{player.percentTimeMoving.toFixed(1)}</Text>
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={styles.statsViewSubtitle}
+            >
+              % TIME MOVING
+            </Text>
+            <Text style={styles.statsViewTitle}>
+              {player.percentTimeMoving.toFixed(1)}
+            </Text>
           </View>
         </View>
         <View style={styles.statsRow}>
           <View style={styles.statsView}>
             <Text style={styles.statsViewSubtitle}>SPM</Text>
-            <Text style={styles.statsViewTitle}>{player.scorePerMinute.toFixed(1)}</Text>
+            <Text style={styles.statsViewTitle}>
+              {player.scorePerMinute.toFixed(1)}
+            </Text>
           </View>
           <View style={styles.separator} />
           <View style={styles.statsView}>
-            <Text adjustsFontSizeToFit numberOfLines={1} style={styles.statsViewSubtitle}>LONGEST STREAK</Text>
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={styles.statsViewSubtitle}
+            >
+              LONGEST STREAK
+            </Text>
             <Text style={styles.statsViewTitle}>{player.longestStreak}</Text>
           </View>
         </View>
         <View style={styles.statsRow}>
           <View style={styles.statsView}>
             <Text style={styles.statsViewSubtitle}>SCORE</Text>
-            <Text adjustsFontSizeToFit numberOfLines={1} style={styles.statsViewTitle}>{player.score}</Text>
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={styles.statsViewTitle}
+            >
+              {player.score}
+            </Text>
           </View>
           <View style={styles.separator} />
           <View style={styles.statsView}>
-            <Text adjustsFontSizeToFit numberOfLines={1} style={styles.statsViewSubtitle}>TOTAL XP</Text>
-            <Text adjustsFontSizeToFit numberOfLines={1} style={styles.statsViewTitle}>{player.totalXp}</Text>
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={styles.statsViewSubtitle}
+            >
+              TOTAL XP
+            </Text>
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={styles.statsViewTitle}
+            >
+              {player.totalXp}
+            </Text>
           </View>
         </View>
       </ScrollView>
@@ -158,7 +223,7 @@ const styles = StyleSheet.create({
     color: colors.secondaryText,
     fontSize: 12,
     marginTop: 2,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   statsView: {
     flex: 1,
@@ -210,7 +275,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     width: constants.viewSpacing,
-  }
+  },
 });
 
 export default PlayerMatchStats;

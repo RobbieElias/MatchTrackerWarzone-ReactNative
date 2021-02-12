@@ -14,3 +14,9 @@ export const formatDate = (utcSeconds) => {
 
     return month + ' ' + day + ' ' + hours + ':' + minutes + ampm;
 }
+
+export const gulagResult = (gulagKills, gulagDeaths) => {
+    if (gulagKills > 0) return 1;
+    if (gulagDeaths > 0) return -1;
+    return 0;
+}

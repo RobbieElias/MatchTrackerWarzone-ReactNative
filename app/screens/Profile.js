@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faExclamationCircle, faUserLock, faLongArrowAltDown, faLongArrowAltUp } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationCircle, faUserLock, faLongArrowAltDown, faLongArrowAltUp, faSkullCrossbones, faCrosshairs } from '@fortawesome/free-solid-svg-icons';
 import {
   faPlaystation,
   faBattleNet,
@@ -24,32 +24,79 @@ import { colors } from '../config/colors';
 import { accounts } from '../config/accounts';
 import * as constants from '../config/constants';
 import { addToRecents } from '../utils/userData';
-import { formatDate } from '../utils/helpers';
+import { formatDate, gulagResult } from '../utils/helpers';
 
 const API = require('../libraries/API')({ platform: 'battle' });
 const { width, height } = Dimensions.get('window');
 var recentMatches = [];
 
-const MatchView = ({ mode, placement, kills, date, onPress }) => (
+const MatchView = ({ mode, placement, kills, damage, gulag, date, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.statsView}>
     <View style={styles.statsRow}>
-      <View style={styles.statsViewSubView}>
-        <Text style={styles.statsViewSubtitle}>MODE</Text>
-        <Text adjustsFontSizeToFit={true} numberOfLines={2} style={styles.statsViewTitle}>{mode}</Text>
-      </View>
-      <View style={styles.statsViewSubView}>
-        <Text style={styles.statsViewSubtitle}>KILLS</Text>
-        <Text adjustsFontSizeToFit={true} numberOfLines={2} style={styles.statsViewTitle}>{kills}</Text>
-      </View>
-      <View style={{ 
-        width: 100,
-      }}
-      >
-        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={styles.matchDate}>{date}</Text>
+      <Text adjustsFontSizeToFit={true} numberOfLines={1} style={styles.matchDetailText}>
+        <Text style={{fontWeight: "bold"}}>{mode}</Text> | {date}
+      </Text>
+    </View>
+    <View style={{flex: 1, flexDirection: 'row'}}>
+      <View style={{ width: 'auto', }}>
         <View style={placement === 1 ? [styles.placementView, styles.placementViewSuccess] : [styles.placementView]}>
           <Text adjustsFontSizeToFit={true} numberOfLines={1} style={styles.placementText}>{placement}</Text>
         </View>
       </View>
+      <View style={{flex: 1}}>
+        <View style={styles.statsRow}>
+          <View style={styles.statsViewSubView}>
+            <Text style={styles.statsViewSubtitle}>KILLS</Text>
+          </View>
+          <View style={styles.statsViewSubView}>
+            <Text style={styles.statsViewSubtitle}>DAMAGE</Text>
+          </View>
+          <View style={styles.statsViewSubView}>
+            <Text style={styles.statsViewSubtitle}>GULAG</Text>
+          </View>
+        </View>
+        <View style={styles.statsRow}>
+          <View style={styles.statsViewSubView}>
+            <Text adjustsFontSizeToFit={true} numberOfLines={1} style={styles.statsViewTitle}>{kills}</Text>
+          </View>
+          <View style={styles.statsViewSubView}>
+            <Text adjustsFontSizeToFit={true} numberOfLines={1} style={styles.statsViewTitle}>{damage}</Text>
+          </View>
+          {gulag === 0 ?
+            <View style={styles.statsViewSubView}>
+              <Text style={styles.statsViewTitle}>-</Text>
+            </View>
+            :
+            <View style={[styles.statsViewSubView, {paddingTop: 4}]}>
+              <Text style={styles.statsViewTitle}>
+                <FontAwesomeIcon icon={ gulag === 1 ? faCrosshairs : faSkullCrossbones } style={styles.gulagIcon} size={width > 360 ? 16 : 12} />
+              </Text>
+            </View>
+          }
+        </View>
+      </View>
+
+      {/* <View style={styles.statsViewSubView}>
+        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={styles.statsViewSubtitle}>KILLS</Text>
+        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={styles.statsViewTitle}>{kills}</Text>
+      </View>
+      <View style={styles.statsViewSubView}>
+        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={styles.statsViewSubtitle}>DAMAGE</Text>
+        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={styles.statsViewTitle}>{damage}</Text>
+      </View>
+      <View style={styles.statsViewSubView}>
+        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={styles.statsViewSubtitle}>GULAG</Text>
+        <Text style={styles.statsViewTitle}>
+        {
+          gulag === 1 ?
+          <FontAwesomeIcon icon={ faCrosshairs } style={styles.gulagIcon} />
+          : gulag === -1 ?
+          <FontAwesomeIcon icon={ faSkullCrossbones } style={styles.gulagIcon} />
+          :
+          <Text>-</Text>
+        }
+        </Text>
+      </View> */}
     </View>
   </TouchableOpacity>
 );
@@ -149,6 +196,8 @@ const Profile = ({ route, navigation }) => {
         mode: API.getGameMode(match.mode),
         placement: match.playerStats.teamPlacement ?? 'N/A',
         kills: match.playerStats.kills,
+        damage: match.playerStats.damageDone,
+        gulag: gulagResult(match.playerStats.gulagKills, match.playerStats.gulagDeaths),
         date: formatDate(match.utcEndSeconds),
       });
     }
@@ -165,7 +214,9 @@ const Profile = ({ route, navigation }) => {
     <MatchView 
       mode={item.mode} 
       placement={item.placement} 
-      kills={item.kills} 
+      kills={item.kills}
+      damage={item.damage}
+      gulag={item.gulag}
       date={item.date} 
       onPress={() => {
         navigation.navigate('Match', {
@@ -380,7 +431,6 @@ const styles = StyleSheet.create({
   statsRow: { 
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between', 
   },
   statsViewSubView: {
     flex: 1, 
@@ -400,14 +450,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     textTransform: 'uppercase',
   },
-  matchDate: { 
-    color: colors.secondaryText,
-    textAlign: 'right', 
-    fontSize: 12, 
-    marginBottom: 8 
-  },
   placementView: {
-    alignSelf: 'flex-end',
     width: width > 360 ? 64 : 48,
     height: width > 360 ? 64 : 48,
     backgroundColor: colors.primary,
@@ -417,13 +460,22 @@ const styles = StyleSheet.create({
   placementViewSuccess: {
     backgroundColor: colors.success,
   },
+  matchDetailText: { 
+    color: colors.secondaryText,
+    fontSize: 12, 
+    marginBottom: 8,
+    textTransform: 'uppercase',
+  },
   placementText: {
     textAlign: 'center',
     color: colors.primaryText,
     fontSize: width > 360 ? 32 : 26,
     fontWeight: 'bold',
     padding: 4,
-  }
+  },
+  gulagIcon: {
+    color: colors.primaryText,
+  },
 });
 
 export default Profile;

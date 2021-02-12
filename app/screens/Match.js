@@ -27,7 +27,7 @@ var matchData = [];
 var activisionUsername = '';
 
 const TeamView = React.memo(
-  ({ isCurrentTeam, placement, kills, deaths, assists, players, onPress }) => (
+  ({ isCurrentTeam, placement, kills, deaths, damage, players, onPress }) => (
     <View
       style={[styles.statsView, isCurrentTeam ? styles.statsViewCurrent : {}]}
     >
@@ -74,7 +74,7 @@ const TeamView = React.memo(
                 numberOfLines={1}
                 style={styles.statsViewTitle}
               >
-                {player.assists}
+                {player.damage}
               </Text>
             </View>
           </TouchableOpacity>
@@ -131,7 +131,7 @@ const TeamView = React.memo(
             numberOfLines={1}
             style={styles.statsViewTitle}
           >
-            {players.length > 1 ? assists : ''}
+            {players.length > 1 ? damage : ''}
           </Text>
         </View>
       </View>
@@ -140,7 +140,7 @@ const TeamView = React.memo(
 );
 
 const PlayerView = React.memo(
-  ({ isCurrentPlayer, username, kills, deaths, assists, onPress }) => (
+  ({ isCurrentPlayer, username, kills, deaths, damage, onPress }) => (
     <TouchableOpacity onPress={onPress}
       style={[
         styles.statsView,
@@ -184,7 +184,7 @@ const PlayerView = React.memo(
           numberOfLines={1}
           style={styles.statsViewTitle}
         >
-          {assists}
+          {damage}
         </Text>
       </View>
     </TouchableOpacity>
@@ -263,7 +263,7 @@ const Match = ({ route, navigation }) => {
         deaths: player.playerStats.deaths,
         headshots: player.playerStats.headshots,
         assists: player.playerStats.assists,
-        damageDone: player.playerStats.damageDone,
+        damage: player.playerStats.damageDone,
         damageTaken: player.playerStats.damageTaken,
         timePlayed: player.playerStats.timePlayed,
         percentTimeMoving: player.playerStats.percentTimeMoving,
@@ -289,7 +289,7 @@ const Match = ({ route, navigation }) => {
         team.players.push(player);
         team.kills += player.kills;
         team.deaths += player.deaths;
-        team.assists += player.assists;
+        team.damage += player.damage;
         if (player.isCurrentPlayer) {
           team.isCurrentTeam = true;
         }
@@ -299,7 +299,7 @@ const Match = ({ route, navigation }) => {
           placement: player.placement,
           kills: player.kills,
           deaths: player.deaths,
-          assists: player.assists,
+          damage: player.damage,
           players: [player],
           isCurrentTeam: player.isCurrentPlayer,
         });
@@ -344,7 +344,7 @@ const Match = ({ route, navigation }) => {
       placement={item.placement}
       kills={item.kills}
       deaths={item.deaths}
-      assists={item.assists}
+      damage={item.damage}
       players={item.players}
       onPress={(playerIndex) => onPressTeamPlayer(index, playerIndex)}
     />
@@ -356,7 +356,7 @@ const Match = ({ route, navigation }) => {
       username={item.username}
       kills={item.kills}
       deaths={item.deaths}
-      assists={item.assists}
+      damage={item.damage}
       onPress={() => onPressPlayer(index)}
     />
   );
@@ -504,7 +504,7 @@ const Match = ({ route, navigation }) => {
                 numberOfLines={1}
                 style={styles.statsViewSubtitle}
               >
-                ASSISTS
+                DAMAGE
               </Text>
             </View>
           </View>

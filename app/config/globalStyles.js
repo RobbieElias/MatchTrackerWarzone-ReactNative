@@ -42,7 +42,7 @@ export const globalStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 48,
+    height: height > 600 ? 48 : 40,
     borderWidth: 1,
     borderRadius: 4,
     borderColor: colors.primary,

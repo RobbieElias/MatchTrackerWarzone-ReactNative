@@ -101,7 +101,7 @@ const PlayerMatchStats = ({ route, navigation }) => {
         <View style={styles.statsRow}>
           <View style={styles.statsView}>
             <Text style={styles.statsViewSubtitle}>DAMAGE</Text>
-            <Text adjustsFontSizeToFit numberOfLines={1} style={styles.statsViewTitle}>{player.damageDone}</Text>
+            <Text adjustsFontSizeToFit numberOfLines={1} style={styles.statsViewTitle}>{player.damage}</Text>
           </View>
           <View style={styles.separator} />
           <View style={styles.statsView}>

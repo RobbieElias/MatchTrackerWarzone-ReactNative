@@ -305,16 +305,19 @@ module.exports = function (config = {}) {
     'br_mini_rebirth_mini_royale_duos': 'Rebirth Mini Duos',
     'br_rebirth_rbrthtrios': 'Rebirth Trios',
     'br_mini_rebirth_mini_royale_quads': 'Rebirth Mini Quads',
-    'brtdm_rmbl': 'Warzone Rumble',
     'br_76': 'Plunder',
     'br_85': 'Plunder',
     'br_104': 'Plunder',
     'br_dmz_plnd': 'Plunder',
     'br_38': 'Plunder Trios',
     'br_dmz_plndtrios': 'Plunder Trios',
+    "br_dmz_plndval1": 'Plunder Trios',
     'br_dmz_plunquad': 'Plunder Quads',
     'br_dmz_plnbld': 'Plunder: Blood Money',
     'br_dmz_plndcndy': 'Plunder: Candy Collector',
+    "brtdm_113": "Warzone Rumble",
+    "brtdm_rmbl": "Warzone Rumble",
+    "brtdm_wzrumval2": "Warzone Rumble",
   }
 
   module.login = function (email, password) {
@@ -1418,7 +1421,8 @@ module.exports = function (config = {}) {
   };
 
   module.getGameMode = function(mode) {
-    return this.modes[mode];
+    console.log(mode);
+    return this.modes[mode] ?? "Other";
   };
 
   module.apiAxios = apiAxios;

@@ -249,7 +249,7 @@ const Home = ({ navigation }) => {
             <Text
               style={[
                 styles.playersListTitle,
-                { marginTop: height > 600 ? 32 : 16 },
+                { marginTop: height > constants.sH ? 32 : 16 },
               ]}
             >
               RECENTS
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: constants.defaultPadding,
   },
   usernameInput: {
-    height: height > 600 ? 70 : 50,
+    height: height > constants.sH ? 70 : 50,
     padding: 8,
     alignSelf: "stretch",
     borderColor: colors.primary,
@@ -320,19 +320,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primary,
-    height: height > 600 ? 70 : 50,
+    height: height > constants.sH ? 70 : 50,
     borderRadius: 4,
     alignSelf: "stretch",
     marginTop: constants.viewSpacing,
   },
   buttonText: {
-    fontSize: height > 600 ? 26 : 22,
+    fontSize: height > constants.sH ? 26 : 22,
     color: colors.primaryText,
   },
   playersListTitle: {
     textAlign: "center",
     color: colors.primaryText,
-    fontSize: height > 600 ? 20 : 16,
+    fontSize: height > constants.sH ? 20 : 16,
   },
   playersListView: {
     flexGrow: 0,

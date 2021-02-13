@@ -1,5 +1,7 @@
 export const defaultPadding = 16;
 export const viewSpacing = 8;
+export const sH = 600; // cutoff height for small screens
+export const sW = 360; // cutoff width for small screens
 
 export const platforms = {
   PLAYSTATION: {

@@ -622,7 +622,7 @@ const styles = StyleSheet.create({
   statsViewSubtitle: {
     color: colors.secondaryText,
     textAlign: "center",
-    fontSize: width > 360 ? 16 : 12,
+    fontSize: width > constants.sW ? 16 : 12,
     fontWeight: "bold",
   },
   statsViewTitle: {

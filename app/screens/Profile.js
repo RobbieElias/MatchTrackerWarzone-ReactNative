@@ -115,7 +115,7 @@ const MatchView = ({
                 <FontAwesomeIcon
                   icon={gulag === 1 ? faCrosshairs : faSkullCrossbones}
                   style={styles.gulagIcon}
-                  size={width > 360 ? 16 : 12}
+                  size={width > constants.sW ? 16 : 12}
                 />
               </Text>
             </View>
@@ -147,7 +147,6 @@ const Profile = ({ route, navigation }) => {
 
   const login = async () => {
     if (!API.isLoggedIn()) {
-      console.log("Logging in");
       // Get a random account to login with (to avoid rate limiting)
       let account = accounts[Math.floor(Math.random() * accounts.length)];
       await API.login(account.username, account.password);
@@ -593,19 +592,19 @@ const styles = StyleSheet.create({
   statsViewSubtitle: {
     color: colors.secondaryText,
     textAlign: "center",
-    fontSize: width > 360 ? 16 : 12,
+    fontSize: width > constants.sW ? 16 : 12,
     fontWeight: "bold",
   },
   statsViewTitle: {
     color: colors.primaryText,
     textAlign: "center",
-    fontSize: width > 360 ? 20 : 16,
+    fontSize: width > constants.sW ? 20 : 16,
     marginTop: 6,
     textTransform: "uppercase",
   },
   placementView: {
-    width: width > 360 ? 64 : 48,
-    height: width > 360 ? 64 : 48,
+    width: width > constants.sW ? 64 : 48,
+    height: width > constants.sW ? 64 : 48,
     backgroundColor: colors.primary,
     justifyContent: "center",
     borderRadius: 4,
@@ -622,7 +621,7 @@ const styles = StyleSheet.create({
   placementText: {
     textAlign: "center",
     color: colors.primaryText,
-    fontSize: width > 360 ? 32 : 26,
+    fontSize: width > constants.sW ? 32 : 26,
     fontWeight: "bold",
     padding: 4,
   },

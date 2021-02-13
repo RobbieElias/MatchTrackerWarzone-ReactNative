@@ -30,7 +30,7 @@ export const globalStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    height: height > 600 ? 48 : 40,
+    height: height > constants.sH ? 48 : 40,
     borderWidth: 1,
     borderRadius: 4,
     borderColor: colors.white,
@@ -42,7 +42,7 @@ export const globalStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    height: height > 600 ? 48 : 40,
+    height: height > constants.sH ? 48 : 40,
     borderWidth: 1,
     borderRadius: 4,
     borderColor: colors.primary,
@@ -50,11 +50,11 @@ export const globalStyles = StyleSheet.create({
     marginBottom: constants.viewSpacing,
   },
   toggleButtonText: {
-    fontSize: width > 360 ? 14 : 12,
+    fontSize: width > constants.sW ? 14 : 12,
     color: colors.primaryText,
   },
   toggleButtonTextSelected: {
-    fontSize: width > 360 ? 14 : 12,
+    fontSize: width > constants.sW ? 14 : 12,
     color: colors.primary,
   },
   loadingView: {

@@ -1421,7 +1421,6 @@ module.exports = function (config = {}) {
   };
 
   module.getGameMode = function(mode) {
-    console.log(mode);
     return this.modes[mode] ?? "Other";
   };
 

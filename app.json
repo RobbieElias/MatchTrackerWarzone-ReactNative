@@ -3,7 +3,7 @@
     "name": "Match Tracker for Warzone",
     "slug": "MatchTrackerWarzone",
     "privacy": "unlisted",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icons/icon.png",
     "backgroundColor": "#1e1e1e",
@@ -21,7 +21,7 @@
     ],
     "ios": {
       "bundleIdentifier": "ca.robbieelias.MatchTrackerWarzone",
-      "buildNumber": "1.0.0",
+      "buildNumber": "1.1.0",
       "supportsTablet": false,
       "backgroundColor": "#1e1e1e"
     },

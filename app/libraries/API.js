@@ -233,6 +233,22 @@ class helpers {
         return {status: response.status, message: "We Could not get a valid reason for a failure."};
     }
   }
+
+  getWeekDates() {
+    var curDate = new Date();
+    curDate.setHours(23);
+    curDate.setMinutes(59);
+    curDate.setSeconds(59);
+    curDate.setMilliseconds(0);
+    var dates = [];
+
+    for (var a = 0; a < 7; a++) {
+      dates.push(curDate.getTime());
+      curDate.setDate(curDate.getDate() - 1);
+    }
+
+    return dates.join();
+  };
 }
 
 module.exports = function (config = {}) {
@@ -275,6 +291,7 @@ module.exports = function (config = {}) {
   };
 
   module.modes = {
+    'br_all': 'All',
     'br_71': 'BR Solos',
     'br_brsolo': 'BR Solos',
     'br_brbbsolo': 'Stim Solos',
@@ -833,7 +850,7 @@ module.exports = function (config = {}) {
       if (platform === "uno" || platform === "acti")
         platform = this.platforms["uno"];
       let urlInput = _helpers.buildUri(
-        `stats/cod/v1/title/mw/platform/${platform}/${lookupType}/${gamertag}/profile/type/wz`
+        `stats/cod/v1/title/mw/platform/${platform}/${lookupType}/${gamertag}/profile/type/wz?periods=${_helpers.getWeekDates()}`
       );
       _helpers
         .sendRequest(urlInput)

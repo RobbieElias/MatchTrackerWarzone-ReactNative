@@ -1,44 +1,14 @@
-import React, { useState, useEffect, useCallback, memo } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
-  ScrollView,
-  SafeAreaView,
-} from "react-native";
+import React from "react";
+import { StyleSheet, Text, View, StatusBar, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faExclamationCircle,
-  faUser,
-  faUsers,
-} from "@fortawesome/free-solid-svg-icons";
 import { globalStyles } from "../config/globalStyles";
 import { colors } from "../config/colors";
 import * as constants from "../config/constants";
-import { formatDate } from "../utils/helpers";
+import { getTimePlayed } from "../utils/helpers";
 
 const PlayerMatchStats = ({ route, navigation }) => {
   const { mode, date, player } = route.params;
   const insets = useSafeAreaInsets();
-
-  const getTimePlayed = () => {
-    if (player.timePlayed === 0) return "0m";
-    let minutes = Math.floor(player.timePlayed / 60);
-    let seconds = player.timePlayed % 60;
-
-    if (minutes === 0) {
-      return seconds + "s";
-    } else if (seconds === 0) {
-      return minutes + "m";
-    } else {
-      return minutes + "m " + seconds + "s";
-    }
-  };
 
   return (
     <View style={globalStyles.container}>
@@ -142,7 +112,7 @@ const PlayerMatchStats = ({ route, navigation }) => {
               numberOfLines={1}
               style={styles.statsViewTitle}
             >
-              {getTimePlayed()}
+              {getTimePlayed(player.timePlayed, false, true, true)}
             </Text>
           </View>
           <View style={styles.separator} />

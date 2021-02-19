@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faExclamationCircle,
-  faUserLock,
+  faLock,
   faLongArrowAltDown,
   faLongArrowAltUp,
   faSkullCrossbones,
@@ -35,28 +35,21 @@ import { formatDate, gulagResult } from "../utils/helpers";
 
 const API = require("../libraries/API")({ platform: "battle" });
 const { width, height } = Dimensions.get("window");
+var profileData = {};
 var recentMatches = [];
 
 const MatchView = ({
   mode,
   placement,
   kills,
+  deaths,
   damage,
   gulag,
   date,
   onPress,
 }) => (
   <TouchableOpacity onPress={onPress} style={styles.statsView}>
-    <View style={styles.statsRow}>
-      <Text
-        adjustsFontSizeToFit={true}
-        numberOfLines={1}
-        style={styles.matchDetailText}
-      >
-        <Text style={{ fontWeight: "bold" }}>{mode}</Text> | {date}
-      </Text>
-    </View>
-    <View style={{ flex: 1, flexDirection: "row" }}>
+    <View style={[styles.statsRow, { alignItems: "center" }]}>
       <View style={{ width: "auto" }}>
         <View
           style={
@@ -74,10 +67,37 @@ const MatchView = ({
           </Text>
         </View>
       </View>
+      <Text
+        adjustsFontSizeToFit={true}
+        numberOfLines={1}
+        style={styles.matchModeText}
+      >
+        {mode}
+      </Text>
+      <Text
+        adjustsFontSizeToFit={true}
+        numberOfLines={1}
+        style={styles.matchDateText}
+      >
+        {date}
+      </Text>
+    </View>
+    <View
+      style={[
+        globalStyles.line,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    />
+    <View style={{ flex: 1, flexDirection: "row" }}>
       <View style={{ flex: 1 }}>
         <View style={styles.statsRow}>
           <View style={styles.statsViewSubView}>
             <Text style={styles.statsViewSubtitle}>KILLS</Text>
+          </View>
+          <View style={styles.statsViewSubView}>
+            <Text style={styles.statsViewSubtitle}>DEATHS</Text>
           </View>
           <View style={styles.statsViewSubView}>
             <Text style={styles.statsViewSubtitle}>DAMAGE</Text>
@@ -94,6 +114,15 @@ const MatchView = ({
               style={styles.statsViewTitle}
             >
               {kills}
+            </Text>
+          </View>
+          <View style={styles.statsViewSubView}>
+            <Text
+              adjustsFontSizeToFit={true}
+              numberOfLines={1}
+              style={styles.statsViewTitle}
+            >
+              {deaths}
             </Text>
           </View>
           <View style={styles.statsViewSubView}>
@@ -173,15 +202,15 @@ const Profile = ({ route, navigation }) => {
         }
       })
       .then(async () => {
-        let data = await API.MWwz(username, platform.code);
+        profileData = await API.MWwz(username, platform.code);
         if (!isMounted) return;
-        let lifetimeData = data.lifetime.mode.br_all.properties;
-        let weeklyData = data.weekly.all.properties;
+        let lifetimeData = profileData.lifetime.mode.br_all.properties;
+        let weeklyData = profileData.weekly.mode.br_all.properties;
         setStats({
           profile: {
             username: username,
             platform: platform,
-            level: data.level,
+            level: profileData.level,
           },
           lifetime: {
             gamesPlayed: lifetimeData.gamesPlayed ?? 0,
@@ -197,7 +226,7 @@ const Profile = ({ route, navigation }) => {
             kdRatio: weeklyData.kdRatio ?? 0,
           },
         });
-        // console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(profileData));
       })
       .catch((error) => {
         if (!isMounted) return;
@@ -222,6 +251,7 @@ const Profile = ({ route, navigation }) => {
         mode: API.getGameMode(match.mode),
         placement: match.playerStats.teamPlacement ?? "N/A",
         kills: match.playerStats.kills,
+        deaths: match.playerStats.deaths,
         damage: match.playerStats.damageDone,
         gulag: gulagResult(
           match.playerStats.gulagKills,
@@ -239,11 +269,30 @@ const Profile = ({ route, navigation }) => {
     getProfileData();
   }, []);
 
+  const onPressLifetimeStats = () => {
+    navigation.navigate("LifetimeStats", {
+      username: username,
+      platform: platform,
+      lifetimeStats: profileData.lifetime,
+    });
+  };
+
+  const onPressWeeklyStats = () => {
+    navigation.navigate("WeeklyStats", {
+      username: username,
+      platform: platform,
+      lifetimeStats: profileData.lifetime.mode.br_all.properties,
+      weeklyStats: profileData.weekly,
+      dailyStats: profileData.periodSummaries,
+    });
+  };
+
   const renderMatchView = ({ item }) => (
     <MatchView
       mode={item.mode}
       placement={item.placement}
       kills={item.kills}
+      deaths={item.deaths}
       damage={item.damage}
       gulag={item.gulag}
       date={item.date}
@@ -306,7 +355,7 @@ const Profile = ({ route, navigation }) => {
                 {"\n"}
                 2. Go to the Linked Accounts page.{"\n"}
                 {"\n"}
-                3. Set 'Data Visible' to 'None', then refresh.{"\n"}
+                3. Set 'Data Visible' to 'None', then refresh the page.{"\n"}
                 {"\n"}
                 4. Set 'Data Visible' to 'All'.{"\n"}
                 {"\n"}
@@ -344,8 +393,21 @@ const Profile = ({ route, navigation }) => {
           </Text>
         </View>
         <View style={globalStyles.line} />
-        <Text style={styles.subtitle}>LIFETIME STATS</Text>
-        <View style={[styles.statsView, globalStyles.defaultBorder]}>
+        <View
+          style={[
+            styles.statsRow,
+            { justifyContent: "space-between", alignItems: "flex-end" },
+          ]}
+        >
+          <Text style={styles.subtitle}>LIFETIME STATS</Text>
+          <TouchableOpacity onPress={onPressLifetimeStats}>
+            <Text style={styles.linkButtonText}>MORE</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          onPress={onPressLifetimeStats}
+          style={[styles.statsView, globalStyles.defaultBorder]}
+        >
           <View style={styles.statsRow}>
             <View style={styles.statsViewSubView}>
               <Text style={styles.statsViewSubtitle}>MATCHES</Text>
@@ -431,11 +493,24 @@ const Profile = ({ route, navigation }) => {
               </Text>
             </View>
           </View>
-        </View>
-        <Text style={[styles.subtitle, { marginTop: constants.viewSpacing }]}>
-          WEEKLY STATS
-        </Text>
+        </TouchableOpacity>
         <View
+          style={[
+            styles.statsRow,
+            {
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              marginTop: constants.viewSpacing,
+            },
+          ]}
+        >
+          <Text style={styles.subtitle}>WEEKLY STATS</Text>
+          <TouchableOpacity onPress={onPressWeeklyStats}>
+            <Text style={styles.linkButtonText}>MORE</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          onPress={onPressWeeklyStats}
           style={[
             styles.statsView,
             { borderWidth: 1, borderColor: colors.primary },
@@ -488,7 +563,7 @@ const Profile = ({ route, navigation }) => {
               </Text>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
         <Text style={[styles.subtitle, { marginTop: constants.viewSpacing }]}>
           RECENT MATCHES
         </Text>
@@ -534,7 +609,7 @@ const Profile = ({ route, navigation }) => {
             <FontAwesomeIcon
               icon={
                 getErrorTitle() === "Private Profile"
-                  ? faUserLock
+                  ? faLock
                   : faExclamationCircle
               }
               color={colors.primaryText}
@@ -572,6 +647,10 @@ const styles = StyleSheet.create({
     color: colors.primaryText,
     fontSize: 20,
   },
+  linkButtonText: {
+    color: colors.primary,
+    fontSize: 16,
+  },
   statsView: {
     flex: 1,
     backgroundColor: colors.viewBackground,
@@ -602,9 +681,25 @@ const styles = StyleSheet.create({
     marginTop: 6,
     textTransform: "uppercase",
   },
+  matchModeText: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.primaryText,
+    textTransform: "uppercase",
+    marginLeft: constants.viewSpacing,
+  },
+  matchDateText: {
+    flex: 1,
+    color: colors.secondaryText,
+    fontSize: 14,
+    textAlign: "right",
+    textTransform: "uppercase",
+    marginLeft: constants.viewSpacing,
+  },
   placementView: {
-    width: width > constants.sW ? 64 : 48,
-    height: width > constants.sW ? 64 : 48,
+    width: 36,
+    height: 36,
     backgroundColor: colors.primary,
     justifyContent: "center",
     borderRadius: 4,
@@ -612,16 +707,10 @@ const styles = StyleSheet.create({
   placementViewSuccess: {
     backgroundColor: colors.success,
   },
-  matchDetailText: {
-    color: colors.secondaryText,
-    fontSize: 12,
-    marginBottom: 8,
-    textTransform: "uppercase",
-  },
   placementText: {
     textAlign: "center",
     color: colors.primaryText,
-    fontSize: width > constants.sW ? 32 : 26,
+    fontSize: 22,
     fontWeight: "bold",
     padding: 4,
   },

@@ -14,6 +14,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import {
   faPlaystation,
   faBattleNet,
@@ -114,6 +115,36 @@ const Home = ({ navigation }) => {
           <View style={globalStyles.toggleButtonView}>
             <TouchableOpacity
               style={
+                selectedPlatform === constants.platforms.BATTLENET
+                  ? globalStyles.toggleButtonSelected
+                  : globalStyles.toggleButton
+              }
+              onPress={() =>
+                onPressPlatformToggleButton(constants.platforms.BATTLENET)
+              }
+            >
+              <FontAwesomeIcon
+                icon={faBattleNet}
+                color={
+                  selectedPlatform === constants.platforms.BATTLENET
+                    ? colors.primary
+                    : colors.white
+                }
+                style={{ marginRight: 4 }}
+              />
+              <Text
+                style={
+                  selectedPlatform === constants.platforms.BATTLENET
+                    ? globalStyles.toggleButtonTextSelected
+                    : globalStyles.toggleButtonText
+                }
+              >
+                {constants.platforms.BATTLENET.name}
+              </Text>
+            </TouchableOpacity>
+            <View style={{ width: constants.viewSpacing }} />
+            <TouchableOpacity
+              style={
                 selectedPlatform === constants.platforms.PLAYSTATION
                   ? globalStyles.toggleButtonSelected
                   : globalStyles.toggleButton
@@ -141,36 +172,6 @@ const Home = ({ navigation }) => {
                 }
               >
                 {constants.platforms.PLAYSTATION.name}
-              </Text>
-            </TouchableOpacity>
-            <View style={{ width: constants.viewSpacing }} />
-            <TouchableOpacity
-              style={
-                selectedPlatform === constants.platforms.BATTLENET
-                  ? globalStyles.toggleButtonSelected
-                  : globalStyles.toggleButton
-              }
-              onPress={() =>
-                onPressPlatformToggleButton(constants.platforms.BATTLENET)
-              }
-            >
-              <FontAwesomeIcon
-                icon={faBattleNet}
-                color={
-                  selectedPlatform === constants.platforms.BATTLENET
-                    ? colors.primary
-                    : colors.white
-                }
-                style={{ marginRight: 4 }}
-              />
-              <Text
-                style={
-                  selectedPlatform === constants.platforms.BATTLENET
-                    ? globalStyles.toggleButtonTextSelected
-                    : globalStyles.toggleButtonText
-                }
-              >
-                {constants.platforms.BATTLENET.name}
               </Text>
             </TouchableOpacity>
             <View style={{ width: constants.viewSpacing }} />
@@ -204,27 +205,35 @@ const Home = ({ navigation }) => {
               </Text>
             </TouchableOpacity>
           </View>
-          <TextInput
-            style={styles.usernameInput}
-            placeholderTextColor={colors.secondaryText}
-            placeholder={
-              selectedPlatform === constants.platforms.BATTLENET
-                ? "Username#XXXX"
-                : "Username"
-            }
-            onChangeText={(username) => setUsername(username.trim())}
-            onSubmitEditing={() => onPressSearchProfile()}
-            defaultValue={username}
-            autoCorrect={false}
-            autoCompleteType={"off"}
-            returnKeyType={"search"}
-          />
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => onPressSearchProfile()}
-          >
-            <Text style={styles.buttonText}>SEARCH PROFILE</Text>
-          </TouchableOpacity>
+          <View style={styles.inputView}>
+            <View style={{ flex: 1 }}>
+              <TextInput
+                style={styles.usernameInput}
+                placeholderTextColor={colors.secondaryText}
+                placeholder={
+                  selectedPlatform === constants.platforms.BATTLENET
+                    ? "Username#XXXX"
+                    : "Username"
+                }
+                onChangeText={(username) => setUsername(username.trim())}
+                onSubmitEditing={() => onPressSearchProfile()}
+                defaultValue={username}
+                autoCorrect={false}
+                autoCompleteType={"off"}
+                returnKeyType={"search"}
+              />
+            </View>
+            <TouchableOpacity
+              style={styles.searchButton}
+              onPress={() => onPressSearchProfile()}
+            >
+              <FontAwesomeIcon
+                icon={faSearch}
+                color={colors.primaryText}
+                size={22}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={{ flex: 1, justifyContent: "center" }}>
           <Text style={styles.playersListTitle}>TOP PLAYERS</Text>
@@ -306,28 +315,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: constants.defaultPadding,
   },
-  usernameInput: {
-    height: height > constants.sH ? 70 : 50,
-    padding: 8,
-    alignSelf: "stretch",
-    borderColor: colors.primary,
-    borderWidth: 1,
+  inputView: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
     borderRadius: 4,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  usernameInput: {
+    flex: 1,
+    height: height > constants.sH ? 60 : 50,
+    padding: 8,
     color: colors.primaryText,
     fontSize: 20,
   },
-  button: {
+  searchButton: {
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primary,
-    height: height > constants.sH ? 70 : 50,
-    borderRadius: 4,
-    alignSelf: "stretch",
-    marginTop: constants.viewSpacing,
-  },
-  buttonText: {
-    fontSize: height > constants.sH ? 26 : 22,
-    color: colors.primaryText,
+    height: height > constants.sH ? 60 : 50,
+    width: height > constants.sH ? 60 : 50,
   },
   playersListTitle: {
     textAlign: "center",

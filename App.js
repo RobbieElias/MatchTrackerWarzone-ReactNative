@@ -4,6 +4,8 @@ import Profile from './app/screens/Profile';
 import Match from './app/screens/Match';
 import PlayerMatchStats from './app/screens/PlayerMatchStats';
 import SBMMLobby from './app/screens/SBMMLobby';
+import LifetimeStats from './app/screens/LifetimeStats';
+import WeeklyStats from './app/screens/WeeklyStats';
 import {
   StyleSheet,
   View,
@@ -42,6 +44,8 @@ class App extends Component {
             <Stack.Screen name='Match' component={Match} options={{ title: 'Match Details' }} />
             <Stack.Screen name='PlayerMatchStats' component={PlayerMatchStats} options={{ title: 'Player Stats' }} />
             <Stack.Screen name='SBMMLobby' component={SBMMLobby} options={{ title: 'SBMMWarzone.com' }} />
+            <Stack.Screen name='LifetimeStats' component={LifetimeStats} options={{ title: 'Lifetime Stats' }} />
+            <Stack.Screen name='WeeklyStats' component={WeeklyStats} options={{ title: 'Weekly Stats' }} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

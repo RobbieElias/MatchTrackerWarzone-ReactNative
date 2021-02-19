@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, memo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -15,11 +15,13 @@ import {
   faExclamationCircle,
   faUser,
   faUsers,
+  faSkullCrossbones,
+  faCrosshairs,
 } from "@fortawesome/free-solid-svg-icons";
 import { globalStyles } from "../config/globalStyles";
 import { colors } from "../config/colors";
 import * as constants from "../config/constants";
-import { formatDate } from "../utils/helpers";
+import { formatDate, gulagResult } from "../utils/helpers";
 
 const API = require("../libraries/API")({ platform: "battle" });
 const { width, height } = Dimensions.get("window");
@@ -140,7 +142,7 @@ const TeamView = React.memo(
 );
 
 const PlayerView = React.memo(
-  ({ isCurrentPlayer, username, kills, deaths, damage, onPress }) => (
+  ({ isCurrentPlayer, username, kills, deaths, gulag, onPress }) => (
     <TouchableOpacity
       onPress={onPress}
       style={[
@@ -179,15 +181,24 @@ const PlayerView = React.memo(
           {deaths}
         </Text>
       </View>
-      <View style={styles.statsViewSubView}>
-        <Text
-          adjustsFontSizeToFit={true}
-          numberOfLines={1}
-          style={styles.statsViewTitle}
+      {gulag === 0 ? (
+        <View style={styles.statsViewSubView}>
+          <Text style={styles.statsViewTitle}>-</Text>
+        </View>
+      ) : (
+        <View
+          style={[
+            styles.statsViewSubView,
+            { paddingTop: 1, alignItems: "center" },
+          ]}
         >
-          {damage}
-        </Text>
-      </View>
+          <FontAwesomeIcon
+            icon={gulag === 1 ? faCrosshairs : faSkullCrossbones}
+            style={styles.gulagIcon}
+            size={14}
+          />
+        </View>
+      )}
     </TouchableOpacity>
   )
 );
@@ -266,6 +277,10 @@ const Match = ({ route, navigation }) => {
         assists: player.playerStats.assists,
         damage: player.playerStats.damageDone,
         damageTaken: player.playerStats.damageTaken,
+        gulag: gulagResult(
+          player.playerStats.gulagKills,
+          player.playerStats.gulagDeaths
+        ),
         timePlayed: player.playerStats.timePlayed,
         percentTimeMoving: player.playerStats.percentTimeMoving,
         scorePerMinute: player.playerStats.scorePerMinute,
@@ -357,7 +372,7 @@ const Match = ({ route, navigation }) => {
       username={item.username}
       kills={item.kills}
       deaths={item.deaths}
-      damage={item.damage}
+      gulag={item.gulag}
       onPress={() => onPressPlayer(index)}
     />
   );
@@ -514,7 +529,7 @@ const Match = ({ route, navigation }) => {
                 numberOfLines={1}
                 style={styles.statsViewSubtitle}
               >
-                DAMAGE
+                {filterByTeam ? "DAMAGE" : "GULAG"}
               </Text>
             </View>
           </View>
@@ -653,6 +668,9 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     padding: 4,
+  },
+  gulagIcon: {
+    color: colors.primaryText,
   },
 });
 

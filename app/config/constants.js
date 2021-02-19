@@ -35,8 +35,8 @@ export const topPlayers = [
     platform: platforms.BATTLENET,
   },
   {
-    name: "Vikkstar123",
-    username: "Vikkstar123#21347",
+    name: "ZLaner",
+    username: "ZLaner#1345",
     platform: platforms.BATTLENET,
   },
   {
@@ -52,6 +52,11 @@ export const topPlayers = [
   {
     name: "Frozone",
     username: "Frozone#11329",
+    platform: platforms.BATTLENET,
+  },
+  {
+    name: "Vikkstar123",
+    username: "Vikkstar123#21347",
     platform: platforms.BATTLENET,
   },
   {

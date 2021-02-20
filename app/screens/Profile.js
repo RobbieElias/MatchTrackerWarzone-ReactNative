@@ -12,6 +12,7 @@ import {
   Dimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Snackbar } from "react-native-paper";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faExclamationCircle,
@@ -20,7 +21,9 @@ import {
   faLongArrowAltUp,
   faSkullCrossbones,
   faCrosshairs,
+  faBookmark as faBookmarkSolid,
 } from "@fortawesome/free-solid-svg-icons";
+import { faBookmark as faBookmarkRegular } from "@fortawesome/free-regular-svg-icons";
 import {
   faPlaystation,
   faBattleNet,
@@ -30,7 +33,14 @@ import { globalStyles } from "../config/globalStyles";
 import { colors } from "../config/colors";
 import { accounts } from "../config/accounts";
 import * as constants from "../config/constants";
-import { addToRecents } from "../utils/userData";
+import {
+  getCachedProfileData,
+  cacheProfileData,
+  addToBookmarks,
+  addToRecents,
+  isUserBookmarked,
+  removeFromBookmarks,
+} from "../utils/userData";
 import { formatDate, gulagResult } from "../utils/helpers";
 
 const API = require("../libraries/API")({ platform: "battle" });
@@ -161,7 +171,9 @@ const Profile = ({ route, navigation }) => {
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [errorStatus, setErrorStatus] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
-  const [stats, setStats] = useState({});
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [stats, setStats] = useState(null);
   const insets = useSafeAreaInsets();
   var isMounted = false;
 
@@ -169,10 +181,55 @@ const Profile = ({ route, navigation }) => {
     isMounted = true;
     getProfileData();
 
+    isUserBookmarked(username, platform).then((bookmarked) => {
+      setIsBookmarked(bookmarked);
+    });
+
     return () => {
       isMounted = false;
     };
   }, []);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => toggleBookmark()}
+          style={{ padding: 8, display: stats ? "flex" : "none" }}
+        >
+          <FontAwesomeIcon
+            icon={isBookmarked ? faBookmarkSolid : faBookmarkRegular}
+            style={{ color: colors.primaryText }}
+            size={20}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, isBookmarked, stats]);
+
+  const toggleBookmark = async () => {
+    let initialBookmark = isBookmarked;
+    setIsBookmarked(!initialBookmark);
+    if (initialBookmark) {
+      removeFromBookmarks(username, platform).then((success) => {
+        if (success) {
+          // Add the removed bookmark back to recents
+          addToRecents(username, platform);
+        } else {
+          setIsBookmarked(initialBookmark);
+        }
+      });
+    } else {
+      addToBookmarks(username, platform).then((success) => {
+        if (success) {
+          setSnackbarMessage("Player has been bookmarked!");
+        } else {
+          setSnackbarMessage("Too many bookmarks!");
+          setIsBookmarked(initialBookmark);
+        }
+      });
+    }
+  };
 
   const login = async () => {
     if (!API.isLoggedIn()) {
@@ -182,63 +239,69 @@ const Profile = ({ route, navigation }) => {
     }
   };
 
-  const getProfileData = async () => {
-    login()
-      .then(async () => {
-        let matchData = await API.MWcombatwz(username, platform.code);
-        if (!isMounted) return;
-        recentMatches = filterMatchData(matchData);
+  const getProfileData = async (refresh = false) => {
+    let cachedData = refresh ? null : await getCachedProfileData(username, platform);
 
-        // update recents list
-        if (platform.code === constants.platforms.BATTLENET.code) {
-          let lastIndexHashtag = username.lastIndexOf("#");
-          let name =
-            lastIndexHashtag === -1
-              ? username
-              : username.substr(0, lastIndexHashtag);
-          addToRecents(name, username, platform);
-        } else {
-          addToRecents(username, username, platform);
-        }
-      })
-      .then(async () => {
-        profileData = await API.MWwz(username, platform.code);
-        if (!isMounted) return;
-        let lifetimeData = profileData.lifetime.mode.br_all.properties;
-        let weeklyData = profileData.weekly.mode.br_all.properties;
-        setStats({
-          profile: {
-            username: username,
-            platform: platform,
-            level: profileData.level,
-          },
-          lifetime: {
-            gamesPlayed: lifetimeData.gamesPlayed ?? 0,
-            wins: lifetimeData.wins ?? 0,
-            gamesPlayed: lifetimeData.gamesPlayed ?? 0,
-            kills: lifetimeData.kills ?? 0,
-            deaths: lifetimeData.deaths ?? 0,
-            kdRatio: lifetimeData.kdRatio ?? 0,
-          },
-          weekly: {
-            kills: weeklyData.kills ?? 0,
-            deaths: weeklyData.deaths ?? 0,
-            kdRatio: weeklyData.kdRatio ?? 0,
-          },
+    if (cachedData !== null) {
+      setProfile(cachedData.data.profileData, cachedData.data.matchData);
+      setIsLoading(false);
+      setIsRefreshing(false);
+    } else {
+      login()
+        .then(async () => {
+          if (!isMounted) return;
+          profileData = await API.MWwz(username, platform.code);
+          let matchData = await API.MWcombatwz(username, platform.code);
+          cacheProfileData(username, platform, {
+            profileData: profileData,
+            matchData: matchData,
+          });
+          if (!isMounted) return;
+
+          setProfile(profileData, matchData);
+        })
+        .catch((error) => {
+          if (!isMounted) return;
+          console.log(error);
+          setErrorStatus(typeof error === "string" ? 1 : error.status);
+          setErrorMessage(typeof error === "string" ? error : error.message);
+        })
+        .finally(() => {
+          if (!isMounted) return;
+          setIsLoading(false);
+          setIsRefreshing(false);
         });
-        // console.log(JSON.stringify(profileData));
-      })
-      .catch((error) => {
-        if (!isMounted) return;
-        console.log(error);
-        setErrorStatus(typeof error === "string" ? 1 : error.status);
-        setErrorMessage(typeof error === "string" ? error : error.message);
-      })
-      .finally(() => {
-        if (!isMounted) return;
-        setIsLoading(false);
-        setIsRefreshing(false);
-      });
+    }
+  };
+
+  const setProfile = (profileData, matchData) => {
+    let lifetimeData = profileData.lifetime.mode.br_all.properties;
+    let weeklyData = profileData.weekly.mode.br_all.properties;
+    setStats({
+      profile: {
+        username: username,
+        platform: platform,
+        level: profileData.level,
+      },
+      lifetime: {
+        gamesPlayed: lifetimeData.gamesPlayed ?? 0,
+        wins: lifetimeData.wins ?? 0,
+        gamesPlayed: lifetimeData.gamesPlayed ?? 0,
+        kills: lifetimeData.kills ?? 0,
+        deaths: lifetimeData.deaths ?? 0,
+        kdRatio: lifetimeData.kdRatio ?? 0,
+      },
+      weekly: {
+        kills: weeklyData.kills ?? 0,
+        deaths: weeklyData.deaths ?? 0,
+        kdRatio: weeklyData.kdRatio ?? 0,
+      },
+    });
+
+    recentMatches = filterMatchData(matchData);
+
+    // update recents list
+    addToRecents(username, platform);
   };
 
   const filterMatchData = (data) => {
@@ -266,7 +329,7 @@ const Profile = ({ route, navigation }) => {
 
   const onRefresh = React.useCallback(() => {
     setIsRefreshing(true);
-    getProfileData();
+    getProfileData(true);
   }, []);
 
   const onPressLifetimeStats = () => {
@@ -447,7 +510,7 @@ const Profile = ({ route, navigation }) => {
                 {(stats.lifetime.gamesPlayed === 0
                   ? 0
                   : (stats.lifetime.wins / stats.lifetime.gamesPlayed) * 100
-                ).toFixed(2)}
+                ).toFixed(1)}
               </Text>
             </View>
           </View>
@@ -626,6 +689,15 @@ const Profile = ({ route, navigation }) => {
           {getErrorMessage()}
         </View>
       )}
+      <Snackbar
+        visible={snackbarMessage !== ""}
+        onDismiss={() => {
+          setSnackbarMessage("");
+        }}
+        duration={4000}
+      >
+        <Text style={{ color: colors.primaryText }}>{snackbarMessage}</Text>
+      </Snackbar>
     </View>
   );
 };

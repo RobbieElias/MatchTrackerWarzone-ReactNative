@@ -14,7 +14,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faBookmark } from "@fortawesome/free-solid-svg-icons";
 import {
   faPlaystation,
   faBattleNet,
@@ -24,13 +24,24 @@ import { Snackbar } from "react-native-paper";
 import { globalStyles } from "../config/globalStyles";
 import * as constants from "../config/constants";
 import { colors } from "../config/colors";
-import { getRecents } from "../utils/userData";
+import { getRecentsList } from "../utils/userData";
 
 const { width, height } = Dimensions.get("window");
 
-const PlayerButton = ({ name, username, platform, onPress }) => (
+const PlayerButton = ({ name, username, platform, isBookmarked, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.playersListButton}>
-    <Text style={{ color: colors.primaryText }}>{name}</Text>
+    <View>
+      <Text style={{ color: colors.primaryText }}>
+        {name}
+      </Text>
+      { isBookmarked &&
+        <FontAwesomeIcon
+          icon={faBookmark}
+          size={14}
+          color={colors.primary}
+          style={{ position: 'absolute', top: -10, right: -5 }} />
+      }
+    </View>
   </TouchableOpacity>
 );
 
@@ -40,36 +51,35 @@ const Home = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [selectedPlatform, setSelectedPlatform] = useState(null);
   const [recents, setRecents] = useState([]);
-  const [snackbarIsVisible, setSnackbarIsVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    getRecents().then((recents) => {
-      setRecents(recents);
-      recentsFlatListRef.current.scrollToOffset({ animated: false, offset: 0 });
-      topPlayersFlatListRef.current.scrollToOffset({
-        animated: false,
-        offset: 0,
+    if (isFocused) {
+      getRecentsList().then((recents) => {
+        setRecents(recents);
+        recentsFlatListRef.current.scrollToOffset({ animated: false, offset: 0 });
+        topPlayersFlatListRef.current.scrollToOffset({
+          animated: false,
+          offset: 0,
+        });
       });
-    });
+    }
   }, [isFocused]);
 
   const onPressPlatformToggleButton = (platform) => {
     setSelectedPlatform(platform);
-    setSnackbarIsVisible(false);
+    setSnackbarMessage("");
   };
 
   const onPressSearchProfile = () => {
     if (selectedPlatform === null) {
       setSnackbarMessage("Please select a platform.");
-      setSnackbarIsVisible(true);
     } else if (username === "") {
       setSnackbarMessage("Please enter a username.");
-      setSnackbarIsVisible(true);
     } else {
-      setSnackbarIsVisible(false);
+      setSnackbarMessage("");
       navigation.navigate("Profile", {
         username: username,
         platform: selectedPlatform,
@@ -82,6 +92,7 @@ const Home = ({ navigation }) => {
       name={item.name ?? item.username}
       username={item.username}
       platform={item.platform}
+      isBookmarked={item.isBookmarked}
       onPress={() => {
         navigation.navigate("Profile", {
           username: item.username,
@@ -220,6 +231,7 @@ const Home = ({ navigation }) => {
                 defaultValue={username}
                 autoCorrect={false}
                 autoCompleteType={"off"}
+                textContentType={"username"}
                 returnKeyType={"search"}
               />
             </View>
@@ -284,10 +296,10 @@ const Home = ({ navigation }) => {
         </View>
       </View>
       <Snackbar
-        visible={snackbarIsVisible}
+        visible={snackbarMessage !== ""}
         style={{ backgroundColor: colors.failure }}
         onDismiss={() => {
-          setSnackbarIsVisible(false);
+          setSnackbarMessage("");
         }}
         duration={5000}
       >

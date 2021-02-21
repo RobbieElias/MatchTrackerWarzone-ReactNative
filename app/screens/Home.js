@@ -31,16 +31,15 @@ const { width, height } = Dimensions.get("window");
 const PlayerButton = ({ name, username, platform, isBookmarked, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.playersListButton}>
     <View>
-      <Text style={{ color: colors.primaryText }}>
-        {name}
-      </Text>
-      { isBookmarked &&
+      <Text style={{ color: colors.primaryText }}>{name}</Text>
+      {isBookmarked && (
         <FontAwesomeIcon
           icon={faBookmark}
           size={14}
           color={colors.primary}
-          style={{ position: 'absolute', top: -10, right: -5 }} />
-      }
+          style={{ position: "absolute", top: -10, right: -5 }}
+        />
+      )}
     </View>
   </TouchableOpacity>
 );
@@ -59,7 +58,10 @@ const Home = ({ navigation }) => {
     if (isFocused) {
       getRecentsList().then((recents) => {
         setRecents(recents);
-        recentsFlatListRef.current.scrollToOffset({ animated: false, offset: 0 });
+        recentsFlatListRef.current.scrollToOffset({
+          animated: false,
+          offset: 0,
+        });
         topPlayersFlatListRef.current.scrollToOffset({
           animated: false,
           offset: 0,

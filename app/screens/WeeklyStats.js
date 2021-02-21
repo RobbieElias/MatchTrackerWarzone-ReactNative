@@ -96,7 +96,6 @@ const WeeklyStats = ({ route }) => {
       }
     }
     dailyStatsArray.sort((a, b) => a.utc < b.utc);
-    // console.log(dailyStatsArray);
     setModeDayStats(dailyStatsArray);
   };
 

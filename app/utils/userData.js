@@ -86,7 +86,11 @@ export const getBookmarks = async () => {
   }
 };
 
-export const isUserBookmarked = async (username, platform, bookmarks = null) => {
+export const isUserBookmarked = async (
+  username,
+  platform,
+  bookmarks = null
+) => {
   if (bookmarks === null) bookmarks = await getBookmarks();
 
   if (
@@ -186,12 +190,14 @@ export const getRecentsList = async () => {
     );
 };
 
-export const getCachedProfileData = async (username = null, platform = null) => {
+export const getCachedProfileData = async (
+  username = null,
+  platform = null
+) => {
   let profileDataArray = [];
   try {
-    profileDataArray = JSON.parse(
-      await AsyncStorage.getItem(profileDataKey)
-    ) ?? [];
+    profileDataArray =
+      JSON.parse(await AsyncStorage.getItem(profileDataKey)) ?? [];
     if (username === null || platform === null) {
       return profileDataArray;
     }
@@ -205,11 +211,14 @@ export const getCachedProfileData = async (username = null, platform = null) => 
   // If we reach here, both username and platform are set
   let curDateMillis = Date.now();
 
-  return profileDataArray.find((profileData) =>
-    equalsIgnoreCase(profileData.username, username) &&
-    profileData.platformCode === platform.code &&
-    profileData.dateStored+profileDataLifespan >= curDateMillis
-  ) ?? null;
+  return (
+    profileDataArray.find(
+      (profileData) =>
+        equalsIgnoreCase(profileData.username, username) &&
+        profileData.platformCode === platform.code &&
+        profileData.dateStored + profileDataLifespan >= curDateMillis
+    ) ?? null
+  );
 };
 
 export const cacheProfileData = async (username, platform, data) => {
@@ -228,7 +237,7 @@ export const cacheProfileData = async (username, platform, data) => {
   }
 
   // Cache data for only 5 profiles
-  while (profileDataArray.length >= 5) profileDataArray.splice(0, 1); 
+  while (profileDataArray.length >= 5) profileDataArray.splice(0, 1);
 
   profileDataArray.push({
     username: username,

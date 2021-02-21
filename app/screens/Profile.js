@@ -240,10 +240,14 @@ const Profile = ({ route, navigation }) => {
   };
 
   const getProfileData = async (refresh = false) => {
-    let cachedData = refresh ? null : await getCachedProfileData(username, platform);
+    let cachedData = refresh
+      ? null
+      : await getCachedProfileData(username, platform);
 
     if (cachedData !== null) {
-      setProfile(cachedData.data.profileData, cachedData.data.matchData);
+      profileData = cachedData.data.profileData;
+      let matchData = cachedData.data.matchData;
+      setProfile(profileData, matchData);
       setIsLoading(false);
       setIsRefreshing(false);
     } else {

@@ -42,11 +42,12 @@ import {
   removeFromBookmarks,
 } from "../utils/userData";
 import { formatDate, gulagResult } from "../utils/helpers";
+import useIsMounted from "../utils/isMounted";
 
 const API = require("../libraries/API")({ platform: "battle" });
 const { width, height } = Dimensions.get("window");
-var profileData = {};
-var recentMatches = [];
+let profileData = {};
+let recentMatches = [];
 
 const MatchView = ({
   mode,
@@ -169,25 +170,22 @@ const Profile = ({ route, navigation }) => {
   const { username, platform } = route.params;
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const [isLoadingMatches, setIsLoadingMatches] = useState(false);
   const [errorStatus, setErrorStatus] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
+  const [lastMatchStartSeconds, setLastMatchStartSeconds] = useState(-1);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [stats, setStats] = useState(null);
   const insets = useSafeAreaInsets();
-  var isMounted = false;
+  const isMounted = useIsMounted();
 
   useEffect(() => {
-    isMounted = true;
     getProfileData();
 
     isUserBookmarked(username, platform).then((bookmarked) => {
       setIsBookmarked(bookmarked);
     });
-
-    return () => {
-      isMounted = false;
-    };
   }, []);
 
   React.useLayoutEffect(() => {
@@ -240,6 +238,9 @@ const Profile = ({ route, navigation }) => {
   };
 
   const getProfileData = async (refresh = false) => {
+    profileData = {};
+    recentMatches = [];
+
     let cachedData = refresh
       ? null
       : await getCachedProfileData(username, platform);
@@ -255,14 +256,9 @@ const Profile = ({ route, navigation }) => {
         .then(async () => {
           if (!isMounted) return;
           profileData = await API.MWwz(username, platform.code);
-          let matchData = await API.MWcombatwz(username, platform.code);
-          cacheProfileData(username, platform, {
-            profileData: profileData,
-            matchData: matchData,
-          });
           if (!isMounted) return;
 
-          setProfile(profileData, matchData);
+          setProfile(profileData, null);
         })
         .catch((error) => {
           if (!isMounted) return;
@@ -278,7 +274,7 @@ const Profile = ({ route, navigation }) => {
     }
   };
 
-  const setProfile = (profileData, matchData) => {
+  const setProfile = (profileData, matchData = null) => {
     let lifetimeData = profileData.lifetime.mode.br_all.properties;
     let weeklyData = profileData.weekly.mode.br_all.properties;
     setStats({
@@ -302,10 +298,45 @@ const Profile = ({ route, navigation }) => {
       },
     });
 
-    recentMatches = filterMatchData(matchData);
+    loadMatches(matchData);
 
     // update recents list
     addToRecents(username, platform);
+  };
+
+  const loadMatches = async (cachedData = null) => {
+    if (!isMounted || isLoadingMatches || recentMatches.length >= 100) {
+      return;
+    }
+
+    setIsLoadingMatches(true);
+
+    try {
+      let end = 0;
+      if (recentMatches.length > 0) {
+        end = recentMatches[recentMatches.length - 1].utcStartSeconds * 1000;
+      }
+      if (end === lastMatchStartSeconds) return;
+
+      let matchData = cachedData
+        ? cachedData
+        : await API.MWcombatwzdate(username, 0, end, platform.code);
+      if (recentMatches.length === 0 && cachedData === null) {
+        cacheProfileData(username, platform, {
+          profileData: profileData,
+          matchData: matchData,
+        });
+      }
+      if (!isMounted) return;
+
+      recentMatches.push(...filterMatchData(matchData));
+      setLastMatchStartSeconds(end);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      if (!isMounted) return;
+      setIsLoadingMatches(false);
+    }
   };
 
   const filterMatchData = (data) => {
@@ -324,6 +355,8 @@ const Profile = ({ route, navigation }) => {
           match.playerStats.gulagKills,
           match.playerStats.gulagDeaths
         ),
+        utcStartSeconds: match.utcStartSeconds,
+        utcEndSeconds: match.utcEndSeconds,
         date: formatDate(match.utcEndSeconds),
       });
     }
@@ -638,6 +671,14 @@ const Profile = ({ route, navigation }) => {
     );
   };
 
+  const FooterView = () => {
+    return (
+      <View style={styles.footerView}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  };
+
   return (
     <View style={globalStyles.container}>
       <StatusBar
@@ -652,7 +693,7 @@ const Profile = ({ route, navigation }) => {
             paddingBottom: insets.bottom + constants.defaultPadding * 2,
           }}
           data={recentMatches}
-          extraData={isLoading}
+          extraData={[isLoading, lastMatchStartSeconds]}
           renderItem={renderMatchView}
           keyExtractor={(match) => match.id}
           refreshControl={
@@ -662,7 +703,9 @@ const Profile = ({ route, navigation }) => {
               tintColor={colors.white}
             />
           }
+          onEndReached={() => loadMatches(null)}
           ListHeaderComponent={errorStatus === 0 ? HeaderView : null}
+          ListFooterComponent={isLoadingMatches ? FooterView : null}
         />
       )}
       {isLoading && (
@@ -792,6 +835,10 @@ const styles = StyleSheet.create({
   },
   gulagIcon: {
     color: colors.primaryText,
+  },
+  footerView: {
+    justifyContent: "center",
+    padding: constants.viewSpacing,
   },
 });
 

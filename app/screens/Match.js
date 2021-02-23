@@ -22,6 +22,7 @@ import { globalStyles } from "../config/globalStyles";
 import { colors } from "../config/colors";
 import * as constants from "../config/constants";
 import { formatDate, gulagResult } from "../utils/helpers";
+import useIsMounted from "../utils/isMounted";
 
 const API = require("../libraries/API")({ platform: "battle" });
 const { width, height } = Dimensions.get("window");
@@ -211,15 +212,10 @@ const Match = ({ route, navigation }) => {
   const [errorStatus, setErrorStatus] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
   const insets = useSafeAreaInsets();
-  var isMounted = false;
+  const isMounted = useIsMounted();
 
   useEffect(() => {
-    isMounted = true;
     getMatchData();
-
-    return () => {
-      isMounted = false;
-    };
   }, []);
 
   const getMatchData = async () => {

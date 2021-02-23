@@ -729,7 +729,7 @@ module.exports = function (config = {}) {
         `crm/cod/v2/title/mw/platform/${platform}/${lookupType}/${gamertag}/matches/wz/start/${start}/end/${end}/details`
       );
       _helpers
-        .sendRequest(urlInput)
+        .sendRequestNoLogin(urlInput)
         .then((data) => resolve(data))
         .catch((e) => reject(e));
     });

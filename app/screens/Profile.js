@@ -422,12 +422,12 @@ const Profile = ({ route, navigation }) => {
       case 404:
         return (
           <Text style={globalStyles.errorMessage}>
-            <Text style={{ fontWeight: "bold" }}>{username}</Text>
+            <Text style={globalStyles.bold}>{username}</Text>
             <Text> on </Text>
-            <Text style={{ fontWeight: "bold" }}>{platform.name}</Text>
+            <Text style={globalStyles.bold}>{platform.name}</Text>
             <Text>
               {" "}
-              does not exist.{"\n"}(Do not use your Activision username)
+              does not exist.{"\n"}(Do not use your Call of Duty username)
             </Text>
           </Text>
         );
@@ -436,9 +436,8 @@ const Profile = ({ route, navigation }) => {
           return (
             <Text style={[globalStyles.errorMessage, { textAlign: "left" }]}>
               <Text>
-                If you are{" "}
-                <Text style={{ fontWeight: "bold" }}>{username}</Text>, perform
-                these steps to make your profile public:{"\n"}
+                If you are <Text style={globalStyles.bold}>{username}</Text>,
+                perform these steps to make your profile public:{"\n"}
                 {"\n"}
                 1. Login to the{" "}
                 <Text

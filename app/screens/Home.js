@@ -9,6 +9,7 @@ import {
   FlatList,
   Dimensions,
   Image,
+  Animated,
 } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -53,9 +54,17 @@ const Home = ({ navigation }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
+  const fadeAnim1 = useRef(new Animated.Value(1)).current;
+  const fadeAnim2 = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (recents.length === 0) animateMessage();
+  }, []);
 
   useEffect(() => {
     if (isFocused) {
+      setSnackbarMessage("");
+
       getRecentsList().then((recents) => {
         setRecents(recents);
         recentsFlatListRef.current.scrollToOffset({
@@ -70,6 +79,33 @@ const Home = ({ navigation }) => {
     }
   }, [isFocused]);
 
+  const animateMessage = () => {
+    Animated.sequence([
+      Animated.delay(3000),
+      Animated.timing(fadeAnim1, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+      Animated.timing(fadeAnim2, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+      Animated.delay(3000),
+      Animated.timing(fadeAnim2, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+      Animated.timing(fadeAnim1, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  };
+
   const onPressPlatformToggleButton = (platform) => {
     setSelectedPlatform(platform);
     setSnackbarMessage("");
@@ -78,15 +114,30 @@ const Home = ({ navigation }) => {
   const onPressSearchProfile = () => {
     if (selectedPlatform === null) {
       setSnackbarMessage("Please select a platform.");
+      return;
     } else if (username === "") {
       setSnackbarMessage("Please enter a username.");
-    } else {
-      setSnackbarMessage("");
-      navigation.navigate("Profile", {
-        username: username,
-        platform: selectedPlatform,
-      });
+      return;
+    } else if (selectedPlatform === constants.platforms.BATTLENET) {
+      let hashtagIndex = username.lastIndexOf("#");
+      if (hashtagIndex < 0) {
+        setSnackbarMessage(
+          "Missing BattleTag '#' (ie. '" + username + "#1234')."
+        );
+        return;
+      }
+      let battleTag = username.substr(hashtagIndex + 1);
+      if (battleTag === "" || isNaN(battleTag)) {
+        setSnackbarMessage("Invalid Battle.net username.");
+        return;
+      }
     }
+
+    setSnackbarMessage("");
+    navigation.navigate("Profile", {
+      username: username,
+      platform: selectedPlatform,
+    });
   };
 
   const renderPlayerButton = ({ item }) => (
@@ -248,11 +299,39 @@ const Home = ({ navigation }) => {
               />
             </TouchableOpacity>
           </View>
+          {recents.length === 0 &&
+          <View style={{ width: "100%" }}>
+            <Animated.View
+              style={{
+                opacity: fadeAnim1,
+                width: "100%",
+                position: "absolute",
+              }}
+            >
+              <Text style={styles.messageText}>
+                <Text>Call of Duty usernames are</Text>
+                <Text style={globalStyles.bold}> not</Text>
+                <Text> supported.</Text>
+              </Text>
+            </Animated.View>
+            <Animated.View
+              style={{
+                opacity: fadeAnim2,
+                width: "100%",
+                position: "absolute",
+              }}
+            >
+              <Text style={styles.messageText}>
+                <Text>Use a linked account instead.</Text>
+              </Text>
+            </Animated.View>
+          </View>
+          }
         </View>
         <View style={{ flex: 1, justifyContent: "center" }}>
           <Text style={styles.playersListTitle}>TOP PLAYERS</Text>
           <FlatList
-            ref={recentsFlatListRef}
+            ref={topPlayersFlatListRef}
             horizontal={true}
             style={styles.playersListView}
             contentContainerStyle={{
@@ -279,7 +358,7 @@ const Home = ({ navigation }) => {
             </Text>
           )}
           <FlatList
-            ref={topPlayersFlatListRef}
+            ref={recentsFlatListRef}
             horizontal={true}
             style={styles.playersListView}
             contentContainerStyle={{
@@ -350,6 +429,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     height: height > constants.sH ? 60 : 50,
     width: height > constants.sH ? 60 : 50,
+  },
+  messageText: {
+    color: colors.secondaryText,
+    textAlign: "center",
+    marginTop: constants.viewSpacing,
   },
   playersListTitle: {
     textAlign: "center",

@@ -5,6 +5,12 @@ import * as constants from "../config/constants";
 const { width, height } = Dimensions.get("window");
 
 export const globalStyles = StyleSheet.create({
+  bold: {
+    fontWeight: 'bold'
+  },
+  italic: {
+    fontStyle: 'italic'
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background,

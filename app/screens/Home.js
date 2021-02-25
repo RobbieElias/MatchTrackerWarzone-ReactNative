@@ -26,6 +26,7 @@ import { globalStyles } from "../config/globalStyles";
 import * as constants from "../config/constants";
 import { colors } from "../config/colors";
 import { getRecentsList } from "../utils/userData";
+import * as Analytics from 'expo-firebase-analytics';
 
 const { width, height } = Dimensions.get("window");
 
@@ -140,7 +141,7 @@ const Home = ({ navigation }) => {
     });
   };
 
-  const renderPlayerButton = ({ item }) => (
+  const renderTopPlayerButton = ({ item }) => (
     <PlayerButton
       name={item.name ?? item.username}
       username={item.username}
@@ -150,6 +151,31 @@ const Home = ({ navigation }) => {
         navigation.navigate("Profile", {
           username: item.username,
           platform: item.platform,
+        });
+
+        Analytics.logEvent('ClickTopPlayerButton', {
+          username: item.username,
+          platform: item.platform.code,
+        });
+      }}
+    />
+  );
+
+  const renderRecentPlayerButton = ({ item }) => (
+    <PlayerButton
+      name={item.name ?? item.username}
+      username={item.username}
+      platform={item.platform}
+      isBookmarked={item.isBookmarked}
+      onPress={() => {
+        navigation.navigate("Profile", {
+          username: item.username,
+          platform: item.platform,
+        });
+
+        Analytics.logEvent('ClickRecentPlayerButton', {
+          username: item.username,
+          platform: item.platform.code,
         });
       }}
     />
@@ -338,7 +364,7 @@ const Home = ({ navigation }) => {
               paddingRight: 2 * constants.defaultPadding,
             }}
             data={constants.topPlayers}
-            renderItem={renderPlayerButton}
+            renderItem={renderTopPlayerButton}
             keyExtractor={(player) =>
               player.username + "-" + player.platform.code
             }
@@ -365,7 +391,7 @@ const Home = ({ navigation }) => {
               paddingRight: 2 * constants.defaultPadding,
             }}
             data={recents}
-            renderItem={renderPlayerButton}
+            renderItem={renderRecentPlayerButton}
             keyExtractor={(player) =>
               player.username + "-" + player.platform.code
             }

@@ -114,7 +114,7 @@ const TeamView = React.memo(
           <Text
             adjustsFontSizeToFit={true}
             numberOfLines={1}
-            style={[styles.statsViewTitle, { fontWeight: "bold" }]}
+            style={[styles.statsViewTitle, globalStyles.bold]}
           >
             {players.length > 1 ? kills : ""}
           </Text>

@@ -3,7 +3,7 @@
     "name": "Match Tracker for COD Warzone",
     "slug": "MatchTrackerWarzone",
     "privacy": "unlisted",
-    "version": "1.3.1",
+    "version": "1.4.0",
     "orientation": "portrait",
     "icon": "./assets/icons/icon.png",
     "backgroundColor": "#1e1e1e",
@@ -16,18 +16,17 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "ca.robbieelias.MatchTrackerWarzone",
-      "buildNumber": "1.3.1",
+      "buildNumber": "1.4.0",
       "supportsTablet": false,
-      "backgroundColor": "#1e1e1e"
+      "backgroundColor": "#1e1e1e",
+      "googleServicesFile": "./assets/firebase/GoogleService-Info.plist"
     },
     "android": {
       "package": "ca.robbieelias.matchtrackerwarzone",
-      "versionCode": 3,
+      "versionCode": 4,
       "enableDangerousExperimentalLeanBuilds": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/adaptive-icon.png",
@@ -35,7 +34,8 @@
       },
       "icon": "./assets/icons/icon.png",
       "permissions": [],
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "googleServicesFile": "./assets/firebase/google-services.json"
     },
     "web": {
       "favicon": "./assets/icons/favicon.png"

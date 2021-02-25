@@ -43,6 +43,7 @@ import {
 } from "../utils/userData";
 import { formatDate, gulagResult } from "../utils/helpers";
 import useIsMounted from "../utils/isMounted";
+import * as Analytics from "expo-firebase-analytics";
 
 const API = require("../libraries/API")({ platform: "battle" });
 const { width, height } = Dimensions.get("window");
@@ -169,7 +170,7 @@ const MatchView = ({
 const Profile = ({ route, navigation }) => {
   const { username, platform } = route.params;
   const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoadingMatches, setIsLoadingMatches] = useState(false);
   const [errorStatus, setErrorStatus] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
@@ -221,6 +222,11 @@ const Profile = ({ route, navigation }) => {
       addToBookmarks(username, platform).then((success) => {
         if (success) {
           setSnackbarMessage("Player has been bookmarked!");
+
+          Analytics.logEvent("BookmarkPlayer", {
+            username: username,
+            platform: platform.code,
+          });
         } else {
           setSnackbarMessage("Too many bookmarks!");
           setIsBookmarked(initialBookmark);
@@ -259,12 +265,22 @@ const Profile = ({ route, navigation }) => {
           if (!isMounted) return;
 
           setProfile(profileData, null);
+
+          Analytics.logEvent("SearchProfile", {
+            username: username,
+            platform: platform.code,
+          });
         })
         .catch((error) => {
           if (!isMounted) return;
           console.log(error);
           setErrorStatus(typeof error === "string" ? 1 : error.status);
           setErrorMessage(typeof error === "string" ? error : error.message);
+
+          Analytics.logEvent("SearchProfileError", {
+            errorStatus: typeof error === "string" ? 1 : error.status,
+            errorMessage: typeof error === "string" ? error : error.message,
+          });
         })
         .finally(() => {
           if (!isMounted) return;
@@ -328,6 +344,13 @@ const Profile = ({ route, navigation }) => {
         });
       }
       if (!isMounted) return;
+
+      if (recentMatches.length > 0) {
+        Analytics.logEvent("LoadMoreMatches", {
+          username: username,
+          platform: platform.code,
+        });
+      }
 
       recentMatches.push(...filterMatchData(matchData));
       setLastMatchStartSeconds(end);

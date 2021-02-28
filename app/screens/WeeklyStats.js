@@ -8,7 +8,6 @@ import {
   FlatList,
   ScrollView,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faLongArrowAltDown,
@@ -52,7 +51,6 @@ const WeeklyStats = ({ route }) => {
   const [modeStats, setModeStats] = useState(null);
   const [modeDayStats, setModeDayStats] = useState(null);
   const [modes, setModes] = useState([]);
-  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     let modesArray = [];
@@ -136,10 +134,7 @@ const WeeklyStats = ({ route }) => {
       />
       {modeStats && (
         <ScrollView
-          contentContainerStyle={{
-            padding: constants.defaultPadding,
-            paddingBottom: constants.defaultPadding + insets.bottom,
-          }}
+          contentContainerStyle={{ padding: constants.defaultPadding }}
         >
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <FontAwesomeIcon

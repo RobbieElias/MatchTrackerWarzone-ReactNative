@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
   Dimensions,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faExclamationCircle,
@@ -211,7 +210,6 @@ const Match = ({ route, navigation }) => {
   const [filterByTeam, setFilterByTeam] = useState(true);
   const [errorStatus, setErrorStatus] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
-  const insets = useSafeAreaInsets();
   const isMounted = useIsMounted();
 
   useEffect(() => {
@@ -537,7 +535,7 @@ const Match = ({ route, navigation }) => {
             filterByTeam ? styles.listContainer : styles.listContainerHidden
           }
           contentContainerStyle={{
-            paddingBottom: insets.bottom + constants.defaultPadding,
+            paddingBottom: constants.defaultPadding,
           }}
           data={matchData.teams}
           renderItem={renderTeamView}
@@ -554,7 +552,7 @@ const Match = ({ route, navigation }) => {
             !filterByTeam ? styles.listContainer : styles.listContainerHidden
           }
           contentContainerStyle={{
-            paddingBottom: insets.bottom + constants.defaultPadding * 2,
+            paddingBottom: constants.defaultPadding * 2,
           }}
           data={matchData.players}
           renderItem={renderPlayerView}

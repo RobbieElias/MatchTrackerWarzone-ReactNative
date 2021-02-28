@@ -16,3 +16,6 @@ web-build/
 # Firebase config files
 assets/firebase/google-services.json
 assets/firebase/GoogleService-Info.plist
+
+# Remove config file (used for custom ids)
+app.config.js

@@ -26,7 +26,7 @@ import { globalStyles } from "../config/globalStyles";
 import * as constants from "../config/constants";
 import { colors } from "../config/colors";
 import { getRecentsList } from "../utils/userData";
-import * as Analytics from 'expo-firebase-analytics';
+import * as Analytics from "expo-firebase-analytics";
 
 const { width, height } = Dimensions.get("window");
 
@@ -153,7 +153,7 @@ const Home = ({ navigation }) => {
           platform: item.platform,
         });
 
-        Analytics.logEvent('ClickTopPlayerButton', {
+        Analytics.logEvent("ClickTopPlayerButton", {
           username: item.username,
           platform: item.platform.code,
         });
@@ -173,7 +173,7 @@ const Home = ({ navigation }) => {
           platform: item.platform,
         });
 
-        Analytics.logEvent('ClickRecentPlayerButton', {
+        Analytics.logEvent("ClickRecentPlayerButton", {
           username: item.username,
           platform: item.platform.code,
         });
@@ -325,34 +325,34 @@ const Home = ({ navigation }) => {
               />
             </TouchableOpacity>
           </View>
-          {recents.length === 0 &&
-          <View style={{ width: "100%" }}>
-            <Animated.View
-              style={{
-                opacity: fadeAnim1,
-                width: "100%",
-                position: "absolute",
-              }}
-            >
-              <Text style={styles.messageText}>
-                <Text>Call of Duty usernames are</Text>
-                <Text style={globalStyles.bold}> not</Text>
-                <Text> supported.</Text>
-              </Text>
-            </Animated.View>
-            <Animated.View
-              style={{
-                opacity: fadeAnim2,
-                width: "100%",
-                position: "absolute",
-              }}
-            >
-              <Text style={styles.messageText}>
-                <Text>Use a linked account instead.</Text>
-              </Text>
-            </Animated.View>
-          </View>
-          }
+          {recents.length === 0 && (
+            <View style={{ width: "100%" }}>
+              <Animated.View
+                style={{
+                  opacity: fadeAnim1,
+                  width: "100%",
+                  position: "absolute",
+                }}
+              >
+                <Text style={styles.messageText}>
+                  <Text>Call of Duty usernames are</Text>
+                  <Text style={globalStyles.bold}> not</Text>
+                  <Text> supported.</Text>
+                </Text>
+              </Animated.View>
+              <Animated.View
+                style={{
+                  opacity: fadeAnim2,
+                  width: "100%",
+                  position: "absolute",
+                }}
+              >
+                <Text style={styles.messageText}>
+                  <Text>Use a linked account instead.</Text>
+                </Text>
+              </Animated.View>
+            </View>
+          )}
         </View>
         <View style={{ flex: 1, justifyContent: "center" }}>
           <Text style={styles.playersListTitle}>TOP PLAYERS</Text>

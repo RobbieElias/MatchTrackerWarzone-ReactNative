@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet, Text, View, StatusBar, ScrollView } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { globalStyles } from "../config/globalStyles";
 import { colors } from "../config/colors";
 import * as constants from "../config/constants";
@@ -8,7 +7,6 @@ import { getTimePlayed } from "../utils/helpers";
 
 const PlayerMatchStats = ({ route, navigation }) => {
   const { mode, date, player } = route.params;
-  const insets = useSafeAreaInsets();
 
   return (
     <View style={globalStyles.container}>
@@ -17,12 +15,7 @@ const PlayerMatchStats = ({ route, navigation }) => {
         translucent={true}
         backgroundColor={colors.navBarBackground}
       />
-      <ScrollView
-        contentContainerStyle={{
-          padding: constants.defaultPadding,
-          paddingBottom: constants.defaultPadding + insets.bottom,
-        }}
-      >
+      <ScrollView contentContainerStyle={{ padding: constants.defaultPadding }}>
         <View style={styles.statsRow}>
           <View style={styles.statsViewSubView}>
             <Text adjustsFontSizeToFit numberOfLines={1} style={styles.title}>

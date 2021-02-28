@@ -8,7 +8,6 @@ import {
   FlatList,
   ScrollView,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faPlaystation,
@@ -56,7 +55,6 @@ const LifetimeStats = ({ route }) => {
       selected: false,
     },
   ]);
-  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     updateStats(modes[0].mode);
@@ -98,10 +96,7 @@ const LifetimeStats = ({ route }) => {
       />
       {modeStats && (
         <ScrollView
-          contentContainerStyle={{
-            padding: constants.defaultPadding,
-            paddingBottom: constants.defaultPadding + insets.bottom,
-          }}
+          contentContainerStyle={{ padding: constants.defaultPadding }}
         >
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <FontAwesomeIcon

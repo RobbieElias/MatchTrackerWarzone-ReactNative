@@ -11,7 +11,6 @@ import {
   Linking,
   Dimensions,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Snackbar } from "react-native-paper";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -178,7 +177,6 @@ const Profile = ({ route, navigation }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [stats, setStats] = useState(null);
-  const insets = useSafeAreaInsets();
   const isMounted = useIsMounted();
 
   useEffect(() => {
@@ -712,7 +710,7 @@ const Profile = ({ route, navigation }) => {
         <FlatList
           style={styles.listContainer}
           contentContainerStyle={{
-            paddingBottom: insets.bottom + constants.defaultPadding * 2,
+            paddingBottom: constants.defaultPadding * 2,
           }}
           data={recentMatches}
           extraData={[isLoading, lastMatchStartSeconds]}

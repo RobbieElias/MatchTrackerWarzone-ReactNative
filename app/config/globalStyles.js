@@ -6,10 +6,10 @@ const { width, height } = Dimensions.get("window");
 
 export const globalStyles = StyleSheet.create({
   bold: {
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   italic: {
-    fontStyle: 'italic'
+    fontStyle: "italic",
   },
   container: {
     flex: 1,

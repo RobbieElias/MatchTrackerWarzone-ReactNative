@@ -1,4 +1,5 @@
-import React, { Component, useRef } from "react";
+import React, { useRef, useState } from "react";
+import { Platform, Dimensions, SafeAreaView } from "react-native";
 import Home from "./app/screens/Home";
 import Profile from "./app/screens/Profile";
 import Match from "./app/screens/Match";
@@ -12,6 +13,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "react-native-screens/native-stack";
 import { colors } from "./app/config/colors";
 import * as Analytics from "expo-firebase-analytics";
+import Constants from "expo-constants";
+import { AdMobBanner } from "expo-ads-admob";
 
 enableScreens();
 const Stack = createNativeStackNavigator();
@@ -22,6 +25,28 @@ Analytics.setUnavailabilityLogging(false);
 const App = () => {
   const navigationRef = useRef();
   const routeNameRef = useRef();
+  const [hasAd, setHasAd] = useState(false);
+  const { width, height } = Dimensions.get("window");
+
+  // Get the banner size
+  let bannerSize = Platform.select({
+    ios: "smartBannerPortrait",
+    android: width >= 468 ? "fullBanner" : "banner",
+  });
+
+  // Get the banner Ad Unit ID
+  let bannerAdUnitId = Constants.manifest.extra.bannerAdUnitIdAndroidTest;
+  if (Constants.appOwnership === "standalone" && Constants.isDevice) {
+    bannerAdUnitId = Platform.select({
+      ios: Constants.manifest.extra.bannerAdUnitIdIos,
+      android: Constants.manifest.extra.bannerAdUnitIdAndroid,
+    });
+  } else {
+    bannerAdUnitId = Platform.select({
+      ios: Constants.manifest.extra.bannerAdUnitIdIosTest,
+      android: Constants.manifest.extra.bannerAdUnitIdAndroidTest,
+    });
+  }
 
   return (
     <SafeAreaProvider style={{ backgroundColor: colors.background }}>
@@ -88,6 +113,18 @@ const App = () => {
           />
         </Stack.Navigator>
       </NavigationContainer>
+      <SafeAreaView
+        style={hasAd ? { backgroundColor: colors.black } : { height: 0 }}
+      >
+        <AdMobBanner
+          bannerSize={bannerSize}
+          adUnitID={bannerAdUnitId}
+          servePersonalizedAds={false}
+          onAdViewDidReceiveAd={() => setHasAd(true)}
+          onDidFailToReceiveAdWithError={() => setHasAd(false)}
+          style={{ alignSelf: "center" }}
+        />
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 };

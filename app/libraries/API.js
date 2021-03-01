@@ -322,6 +322,7 @@ module.exports = function (config = {}) {
     'br_mini_rebirth_mini_royale_duos': 'Rebirth Mini Duos',
     'br_rebirth_rbrthtrios': 'Rebirth Trios',
     'br_mini_rebirth_mini_royale_quads': 'Rebirth Mini Quads',
+    'br_rebirth_rbrthex': 'Resurgence Extreme',
     'br_76': 'Plunder',
     'br_85': 'Plunder',
     'br_104': 'Plunder',

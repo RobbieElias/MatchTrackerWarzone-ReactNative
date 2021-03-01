@@ -25,6 +25,16 @@ export const topPlayers = [
     platform: platforms.BATTLENET,
   },
   {
+    name: "Aydan",
+    username: "Aydan#11691",
+    platform: platforms.BATTLENET,
+  },
+  {
+    name: "HusKerrs",
+    username: "HusKerrs#1343",
+    platform: platforms.BATTLENET,
+  },
+  {
     name: "Iron",
     username: "Iron#11745",
     platform: platforms.BATTLENET,
@@ -47,6 +57,11 @@ export const topPlayers = [
   {
     name: "TOMMEY",
     username: "TOMMEY#21329",
+    platform: platforms.BATTLENET,
+  },
+  {
+    name: "IceManIsaac",
+    username: "IceManIsaac#1815",
     platform: platforms.BATTLENET,
   },
   {
@@ -82,6 +97,11 @@ export const topPlayers = [
   {
     name: "UnRationaL",
     username: "UnRationaLLL#1556",
+    platform: platforms.BATTLENET,
+  },
+  {
+    name: "pieman",
+    username: "pieman#12544",
     platform: platforms.BATTLENET,
   },
   {

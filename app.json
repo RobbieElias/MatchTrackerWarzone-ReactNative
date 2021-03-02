@@ -3,7 +3,7 @@
     "name": "Match Tracker for COD Warzone",
     "slug": "MatchTrackerWarzone",
     "privacy": "unlisted",
-    "version": "1.5.1",
+    "version": "1.5.2",
     "orientation": "portrait",
     "icon": "./assets/icons/icon.png",
     "backgroundColor": "#1e1e1e",
@@ -19,7 +19,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "ca.robbieelias.MatchTrackerWarzone",
-      "buildNumber": "1.5.1",
+      "buildNumber": "1.5.2",
       "supportsTablet": false,
       "backgroundColor": "#1e1e1e",
       "googleServicesFile": "./assets/firebase/GoogleService-Info.plist",

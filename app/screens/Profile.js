@@ -166,6 +166,64 @@ const MatchView = ({
   </TouchableOpacity>
 );
 
+const MatchSummaryView = ({
+  numberOfMatches,
+  bestGameKills,
+  gulagKills,
+  gulagDeaths,
+}) => (
+  <View
+    style={[
+      styles.statsView,
+      { borderWidth: 1, borderStyle: "dashed", borderColor: colors.primary },
+    ]}
+  >
+    <View style={styles.statsRow}>
+      <View style={styles.statsViewSubView}>
+        <Text style={styles.statsViewSubtitle}>MATCHES</Text>
+      </View>
+      <View style={styles.statsViewSubView}>
+        <Text style={styles.statsViewSubtitle}>BEST GAME</Text>
+      </View>
+      <View style={styles.statsViewSubView}>
+        <Text style={styles.statsViewSubtitle}>GULAG</Text>
+      </View>
+    </View>
+    <View style={styles.statsRow}>
+      <View style={styles.statsViewSubView}>
+        <Text style={styles.statsViewTitle}>{numberOfMatches}</Text>
+      </View>
+      <View style={styles.statsViewSubView}>
+        <Text style={styles.statsViewTitle}>
+          {bestGameKills}{" "}
+          <FontAwesomeIcon
+            icon={faCrosshairs}
+            style={styles.gulagIcon}
+            size={width > constants.sW ? 15 : 11}
+          />
+        </Text>
+      </View>
+      <View style={styles.statsViewSubView}>
+        <Text style={styles.statsViewTitle}>
+          {gulagKills}{" "}
+          <FontAwesomeIcon
+            icon={faCrosshairs}
+            style={styles.gulagIcon}
+            size={width > constants.sW ? 15 : 11}
+          />
+          {"  "}
+          {gulagDeaths}{" "}
+          <FontAwesomeIcon
+            icon={faSkullCrossbones}
+            style={styles.gulagIcon}
+            size={width > constants.sW ? 15 : 11}
+          />
+        </Text>
+      </View>
+    </View>
+  </View>
+);
+
 const Profile = ({ route, navigation }) => {
   const { username, platform } = route.params;
   const [isLoading, setIsLoading] = useState(true);
@@ -249,7 +307,11 @@ const Profile = ({ route, navigation }) => {
       ? null
       : await getCachedProfileData(username, platform);
 
-    if (cachedData !== null) {
+    if (
+      cachedData !== null &&
+      Object.keys(cachedData.data.profileData).length !== 0 &&
+      Object.keys(cachedData.data.matchData).length !== 0
+    ) {
       profileData = cachedData.data.profileData;
       let matchData = cachedData.data.matchData;
       setProfile(profileData, matchData);
@@ -264,10 +326,17 @@ const Profile = ({ route, navigation }) => {
 
           setProfile(profileData, null);
 
-          Analytics.logEvent("SearchProfile", {
-            username: username,
-            platform: platform.code,
-          });
+          if (refresh) {
+            Analytics.logEvent("RefreshProfile", {
+              username: username,
+              platform: platform.code,
+            });
+          } else {
+            Analytics.logEvent("SearchProfile", {
+              username: username,
+              platform: platform.code,
+            });
+          }
         })
         .catch((error) => {
           if (!isMounted) return;
@@ -363,8 +432,25 @@ const Profile = ({ route, navigation }) => {
   const filterMatchData = (data) => {
     let matches = [];
 
+    let bestGameKills = 0;
+    let gulagKills = 0;
+    let gulagDeaths = 0;
+
     for (const match of data.matches) {
+      if (match.playerStats.kills > bestGameKills) {
+        bestGameKills = match.playerStats.kills;
+      }
+
+      let gulag = gulagResult(
+        match.playerStats.gulagKills,
+        match.playerStats.gulagDeaths
+      );
+
+      gulagKills += gulag === 1 ? 1 : 0;
+      gulagDeaths += gulag === -1 ? 1 : 0;
+
       matches.push({
+        type: "match",
         id: match.matchID,
         uno: match.player.uno,
         mode: API.getGameMode(match.mode),
@@ -372,13 +458,21 @@ const Profile = ({ route, navigation }) => {
         kills: match.playerStats.kills,
         deaths: match.playerStats.deaths,
         damage: match.playerStats.damageDone,
-        gulag: gulagResult(
-          match.playerStats.gulagKills,
-          match.playerStats.gulagDeaths
-        ),
+        gulag: gulag,
         utcStartSeconds: match.utcStartSeconds,
         utcEndSeconds: match.utcEndSeconds,
         date: formatDate(match.utcEndSeconds),
+      });
+    }
+
+    if (matches.length > 0) {
+      matches.unshift({
+        type: "summary",
+        id: matches[0].utcStartSeconds.toString(),
+        numberOfMatches: matches.length,
+        bestGameKills: bestGameKills,
+        gulagKills: gulagKills,
+        gulagDeaths: gulagDeaths,
       });
     }
 
@@ -408,23 +502,32 @@ const Profile = ({ route, navigation }) => {
     });
   };
 
-  const renderMatchView = ({ item }) => (
-    <MatchView
-      mode={item.mode}
-      placement={item.placement}
-      kills={item.kills}
-      deaths={item.deaths}
-      damage={item.damage}
-      gulag={item.gulag}
-      date={item.date}
-      onPress={() => {
-        navigation.navigate("Match", {
-          matchID: item.id,
-          uno: item.uno,
-        });
-      }}
-    />
-  );
+  const renderMatchView = ({ item }) => {
+    return item.type === "match" ? (
+      <MatchView
+        mode={item.mode}
+        placement={item.placement}
+        kills={item.kills}
+        deaths={item.deaths}
+        damage={item.damage}
+        gulag={item.gulag}
+        date={item.date}
+        onPress={() => {
+          navigation.navigate("Match", {
+            matchID: item.id,
+            uno: item.uno,
+          });
+        }}
+      />
+    ) : (
+      <MatchSummaryView
+        numberOfMatches={item.numberOfMatches}
+        bestGameKills={item.bestGameKills}
+        gulagKills={item.gulagKills}
+        gulagDeaths={item.gulagDeaths}
+      />
+    );
+  };
 
   const getErrorTitle = () => {
     switch (errorStatus) {
@@ -715,7 +818,7 @@ const Profile = ({ route, navigation }) => {
           data={recentMatches}
           extraData={[isLoading, lastMatchStartSeconds]}
           renderItem={renderMatchView}
-          keyExtractor={(match) => match.id}
+          keyExtractor={(item) => item.id}
           refreshControl={
             <RefreshControl
               refreshing={isRefreshing}

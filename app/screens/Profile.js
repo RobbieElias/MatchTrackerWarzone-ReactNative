@@ -10,6 +10,7 @@ import {
   RefreshControl,
   Linking,
   Dimensions,
+  Platform,
 } from "react-native";
 import { Snackbar } from "react-native-paper";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -169,6 +170,8 @@ const MatchView = ({
 const MatchSummaryView = ({
   numberOfMatches,
   bestGameKills,
+  bestPlacement,
+  bestPlacementCount,
   gulagKills,
   gulagDeaths,
 }) => (
@@ -178,12 +181,17 @@ const MatchSummaryView = ({
       { borderWidth: 1, borderStyle: "dashed", borderColor: colors.primary },
     ]}
   >
+    <View>
+      <Text style={styles.matchSummaryText}>
+        {numberOfMatches} MATCH SUMMARY
+      </Text>
+    </View>
     <View style={styles.statsRow}>
       <View style={styles.statsViewSubView}>
-        <Text style={styles.statsViewSubtitle}>MATCHES</Text>
+        <Text style={styles.statsViewSubtitle}>BEST GAME</Text>
       </View>
       <View style={styles.statsViewSubView}>
-        <Text style={styles.statsViewSubtitle}>BEST GAME</Text>
+        <Text style={styles.statsViewSubtitle}>PLACEMENT</Text>
       </View>
       <View style={styles.statsViewSubView}>
         <Text style={styles.statsViewSubtitle}>GULAG</Text>
@@ -191,31 +199,57 @@ const MatchSummaryView = ({
     </View>
     <View style={styles.statsRow}>
       <View style={styles.statsViewSubView}>
-        <Text style={styles.statsViewTitle}>{numberOfMatches}</Text>
-      </View>
-      <View style={styles.statsViewSubView}>
-        <Text style={styles.statsViewTitle}>
+        <Text style={[styles.statsViewTitle, { marginTop: 2 }]}>
           {bestGameKills}{" "}
           <FontAwesomeIcon
             icon={faCrosshairs}
-            style={styles.gulagIcon}
+            style={styles.matchSummaryIcon}
             size={width > constants.sW ? 15 : 11}
           />
         </Text>
       </View>
       <View style={styles.statsViewSubView}>
-        <Text style={styles.statsViewTitle}>
+        {bestPlacementCount > 0 ? (
+          <View
+            style={{
+              flexDirection: "row",
+              marginTop: 2,
+              alignItems: "flex-end",
+            }}
+          >
+            <View
+              style={
+                bestPlacement === 1
+                  ? [styles.placementViewSummary, styles.placementViewSuccess]
+                  : styles.placementViewSummary
+              }
+            >
+              <Text style={styles.placementTextSummary}>{bestPlacement}</Text>
+            </View>
+            {bestPlacementCount > 1 ? (
+              <Text style={styles.placementCountSummary}>
+                {" "}
+                x{bestPlacementCount}
+              </Text>
+            ) : null}
+          </View>
+        ) : (
+          <Text style={[styles.statsViewTitle, { marginTop: 2 }]}>-</Text>
+        )}
+      </View>
+      <View style={styles.statsViewSubView}>
+        <Text style={[styles.statsViewTitle, { marginTop: 2 }]}>
           {gulagKills}{" "}
           <FontAwesomeIcon
             icon={faCrosshairs}
-            style={styles.gulagIcon}
+            style={styles.matchSummaryIcon}
             size={width > constants.sW ? 15 : 11}
           />
           {"  "}
           {gulagDeaths}{" "}
           <FontAwesomeIcon
             icon={faSkullCrossbones}
-            style={styles.gulagIcon}
+            style={styles.matchSummaryIcon}
             size={width > constants.sW ? 15 : 11}
           />
         </Text>
@@ -431,7 +465,8 @@ const Profile = ({ route, navigation }) => {
 
   const filterMatchData = (data) => {
     let matches = [];
-
+    let bestPlacement = 99999;
+    let bestPlacementCount = 0;
     let bestGameKills = 0;
     let gulagKills = 0;
     let gulagDeaths = 0;
@@ -439,6 +474,17 @@ const Profile = ({ route, navigation }) => {
     for (const match of data.matches) {
       if (match.playerStats.kills > bestGameKills) {
         bestGameKills = match.playerStats.kills;
+      }
+      if (
+        match.playerStats.teamPlacement &&
+        Number.isInteger(match.playerStats.teamPlacement)
+      ) {
+        if (match.playerStats.teamPlacement < bestPlacement) {
+          bestPlacement = match.playerStats.teamPlacement;
+          bestPlacementCount = 1;
+        } else if (match.playerStats.teamPlacement === bestPlacement) {
+          bestPlacementCount += 1;
+        }
       }
 
       let gulag = gulagResult(
@@ -471,6 +517,8 @@ const Profile = ({ route, navigation }) => {
         id: matches[0].utcStartSeconds.toString(),
         numberOfMatches: matches.length,
         bestGameKills: bestGameKills,
+        bestPlacement: bestPlacement,
+        bestPlacementCount: bestPlacementCount,
         gulagKills: gulagKills,
         gulagDeaths: gulagDeaths,
       });
@@ -523,6 +571,8 @@ const Profile = ({ route, navigation }) => {
       <MatchSummaryView
         numberOfMatches={item.numberOfMatches}
         bestGameKills={item.bestGameKills}
+        bestPlacement={item.bestPlacement}
+        bestPlacementCount={item.bestPlacementCount}
         gulagKills={item.gulagKills}
         gulagDeaths={item.gulagDeaths}
       />
@@ -923,6 +973,13 @@ const styles = StyleSheet.create({
     marginTop: 6,
     textTransform: "uppercase",
   },
+  matchSummaryText: {
+    color: colors.primaryText,
+    fontSize: width > constants.sW ? 14 : 10,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingBottom: 4,
+  },
   matchModeText: {
     flex: 1,
     fontSize: 18,
@@ -946,6 +1003,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 4,
   },
+  placementViewSummary: {
+    minWidth: 24,
+    backgroundColor: colors.primary,
+    justifyContent: "center",
+    borderRadius: 4,
+  },
   placementViewSuccess: {
     backgroundColor: colors.success,
   },
@@ -955,6 +1018,26 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     padding: 4,
+  },
+  placementTextSummary: {
+    textAlign: "center",
+    color: colors.primaryText,
+    fontSize: width > constants.sW ? 16 : 14,
+    fontWeight: "bold",
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+  },
+  placementCountSummary: {
+    textAlign: "center",
+    color: colors.primaryText,
+    fontSize: width > constants.sW ? 14 : 12,
+  },
+  matchSummaryIcon: {
+    color: colors.primaryText,
+    marginTop: Platform.select({
+      ios: 3,
+      android: 4,
+    }),
   },
   gulagIcon: {
     color: colors.primaryText,

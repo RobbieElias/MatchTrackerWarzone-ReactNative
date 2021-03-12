@@ -854,7 +854,7 @@ module.exports = function (config = {}) {
         `stats/cod/v1/title/mw/platform/${platform}/${lookupType}/${gamertag}/profile/type/wz?periods=${_helpers.getWeekDates()}`
       );
       _helpers
-        .sendRequest(urlInput)
+        .sendRequestNoLogin(urlInput)
         .then((data) => resolve(data))
         .catch((e) => reject(e));
     });

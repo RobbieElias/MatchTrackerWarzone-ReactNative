@@ -31,7 +31,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { globalStyles } from "../config/globalStyles";
 import { colors } from "../config/colors";
-import { accounts } from "../config/accounts";
+// import { accounts } from "../config/accounts";
 import * as constants from "../config/constants";
 import {
   getCachedProfileData,
@@ -328,8 +328,10 @@ const Profile = ({ route, navigation }) => {
   const login = async () => {
     if (!API.isLoggedIn()) {
       // Get a random account to login with (to avoid rate limiting)
-      let account = accounts[Math.floor(Math.random() * accounts.length)];
-      await API.login(account.username, account.password);
+      // let account = accounts[Math.floor(Math.random() * accounts.length)];
+
+      // Login no longer required, API working without auth
+      // await API.login(account.username, account.password);
     }
   };
 

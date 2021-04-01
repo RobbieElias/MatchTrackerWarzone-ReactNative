@@ -406,7 +406,7 @@ const Match = ({ route, navigation }) => {
             </View>
           </View>
           <View style={[globalStyles.line, { marginBottom: 0 }]} />
-          <View
+          {/* <View
             style={{
               flexDirection: "row",
               justifyContent: "center",
@@ -427,7 +427,7 @@ const Match = ({ route, navigation }) => {
             >
               <Text style={{ color: colors.primary }}>SBMMWarzone.com</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
           <View style={globalStyles.toggleButtonView}>
             <TouchableOpacity
               style={

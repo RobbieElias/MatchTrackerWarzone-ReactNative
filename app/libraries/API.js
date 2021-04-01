@@ -379,6 +379,10 @@ module.exports = function (config = {}) {
     });
   };
 
+  module.logout = function () {
+    loggedIn = false;
+  };
+
   module.IWStats = function (gamertag, platform = config.platform) {
     return new Promise((resolve, reject) => {
       let urlInput = _helpers.buildUri(
@@ -730,7 +734,7 @@ module.exports = function (config = {}) {
         `crm/cod/v2/title/mw/platform/${platform}/${lookupType}/${gamertag}/matches/wz/start/${start}/end/${end}/details`
       );
       _helpers
-        .sendRequestNoLogin(urlInput)
+        .sendRequest(urlInput)
         .then((data) => resolve(data))
         .catch((e) => reject(e));
     });
@@ -854,7 +858,7 @@ module.exports = function (config = {}) {
         `stats/cod/v1/title/mw/platform/${platform}/${lookupType}/${gamertag}/profile/type/wz?periods=${_helpers.getWeekDates()}`
       );
       _helpers
-        .sendRequestNoLogin(urlInput)
+        .sendRequest(urlInput)
         .then((data) => resolve(data))
         .catch((e) => reject(e));
     });

@@ -8,7 +8,7 @@ const SBMMLobby = ({ route, navigation }) => {
     <WebView
       source={{
         uri:
-          "https://SBMMWarzone.com/lobby/" +
+          "https://wzstats.gg/match/" +
           matchID +
           "/player/" +
           activisionUsername,

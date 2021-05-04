@@ -99,7 +99,7 @@ const App = () => {
           <Stack.Screen
             name="SBMMLobby"
             component={SBMMLobby}
-            options={{ title: "SBMMWarzone.com" }}
+            options={{ title: "WZStats.gg" }}
           />
           <Stack.Screen
             name="LifetimeStats"

@@ -348,9 +348,11 @@ const Profile = ({ route, navigation }) => {
     ) {
       profileData = cachedData.data.profileData;
       let matchData = cachedData.data.matchData;
-      setProfile(profileData, matchData);
-      setIsLoading(false);
-      setIsRefreshing(false);
+      login().finally(() => {
+        setProfile(profileData, matchData);
+        setIsLoading(false);
+        setIsRefreshing(false);
+      });
     } else {
       login()
         .then(async () => {
@@ -399,7 +401,17 @@ const Profile = ({ route, navigation }) => {
 
   const setProfile = (profileData, matchData = null) => {
     let lifetimeData = profileData.lifetime.mode.br_all.properties;
-    let weeklyData = profileData.weekly.mode.br_all.properties;
+    let weeklyData;
+    try {
+      weeklyData = profileData.weekly.mode.br_all.properties;  
+    } catch (error) {
+      weeklyData = {
+        kills: 0,
+        deaths: 0,
+        kdRatio: 0,
+      }
+    }
+    
     setStats({
       profile: {
         username: username,

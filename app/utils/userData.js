@@ -1,4 +1,4 @@
-import { AsyncStorage } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as constants from "../config/constants";
 
 const recentsKey = "RECENTS";

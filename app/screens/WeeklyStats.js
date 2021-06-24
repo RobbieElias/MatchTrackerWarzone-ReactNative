@@ -69,7 +69,9 @@ const WeeklyStats = ({ route }) => {
   }, []);
 
   const updateStats = (newMode) => {
-    setModeStats(weeklyStats.mode[newMode].properties);
+    if (weeklyStats.mode[newMode]) {
+      setModeStats(weeklyStats.mode[newMode].properties);
+    }
 
     let dailyStatsArray = [];
 
